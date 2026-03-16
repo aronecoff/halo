@@ -4,38 +4,6 @@ import { HaloMark, IrisOrb, PrimaryButton, ScreenWrap } from "@/components/ui";
 
 const PHASES = ["DEPLOY", "SCAN", "ANALYZE", "NEGOTIATE", "LOCK"];
 
-// Demo match data — showcases the matching engine's multi-dimensional output
-const DEMO_MATCH = {
-  id: "demo-match-001",
-  user_a_id: "demo-a",
-  user_b_id: "demo-b",
-  status: "pending",
-  compatibility_score: 89,
-  shared_traits: ["Authenticity", "Curiosity", "Depth", "Growth oriented"],
-  complementary_traits: ["Communication: Direct + Thoughtful", "Social Energy: Introvert + Ambivert"],
-  iris_description: "High-signal match. Both bring secure attachment patterns — the strongest foundation for lasting connection. Shared foundation in authenticity and curiosity.",
-  match_dimensions: [
-    { name: "Attachment Compatibility", score: 95, weight: 0.25, weighted: 23.75, insight: "Both bring secure attachment patterns. This is the strongest foundation for lasting connection." },
-    { name: "Communication Resonance", score: 86, weight: 0.20, weighted: 17.2, insight: "Direct meets thoughtful — different styles, but high mutual readability." },
-    { name: "Values Alignment", score: 92, weight: 0.20, weighted: 18.4, insight: "Strong values alignment: both prioritize authenticity and depth. This is the bedrock." },
-    { name: "Emotional Intelligence", score: 88, weight: 0.15, weighted: 13.2, insight: "Close emotional wavelength. Minor asymmetry won't create friction." },
-    { name: "Growth Trajectory", score: 84, weight: 0.10, weighted: 8.4, insight: "Both on active growth trajectories. They'll push each other forward." },
-    { name: "Intent Alignment", score: 91, weight: 0.10, weighted: 9.1, insight: "Both seeking genuine connection. Intent is aligned." },
-  ],
-  risk_factors: [],
-  venue: {
-    name: "Saint Frank Coffee",
-    area: "Russian Hill, SF",
-    short: "Saint Frank",
-    lat: 37.7986,
-    lng: -122.4189,
-  },
-  meeting_day: "Saturday",
-  meeting_time: "10:30 AM",
-  conversation_starter: "Ask them what makes them feel most at home with someone.",
-  other_user_name: "Elena",
-};
-
 interface HomeScreenProps {
   onMatchFound: (match: any) => void;
 }
@@ -103,40 +71,27 @@ export function HomeScreen({ onMatchFound }: HomeScreenProps) {
         });
         const data = await res.json();
 
-        // Use real match if available, otherwise fall back to demo data
-        const matchData = data.match || (!data.match && (data.error?.includes("Not enough") || data.error?.includes("No eligible") || data.error?.includes("No available")) ? DEMO_MATCH : null);
-
-        if (matchData) {
-          addLog(`Compatible profile detected: ${matchData.other_user_name || "unknown"}`, "filter");
+        if (data.match) {
+          addLog(`Compatible profile detected: ${data.match.other_user_name || "unknown"}`, "filter");
           await delay(400);
-          addLog(`Compatibility score computed: ${matchData.compatibility_score}%`, "filter");
+          addLog(`Compatibility score computed: ${data.match.compatibility_score}%`, "filter");
           await delay(300);
-          addLog(`Shared traits: ${(matchData.shared_traits || []).join(", ") || "analyzing..."}`, "filter");
+          addLog(`Shared traits: ${(data.match.shared_traits || []).join(", ") || "analyzing..."}`, "filter");
           await delay(400);
           addLog("Match locked.", "done");
           setPhase(5);
           setScanState("matched");
-          setTimeout(() => onMatchFound(matchData), 1200);
+          setTimeout(() => onMatchFound(data.match), 1200);
         } else {
-          addLog(`Status: ${data.error || "No results"}`, "sys");
+          addLog("Scan complete. Waiting for more people to join.", "sys");
           setScanState("waiting");
-          setWaitMessage(data.error || "Matching is temporarily unavailable.");
+          setWaitMessage("IRIS is monitoring the network. You will be matched as soon as a compatible person joins.");
         }
       } catch (e) {
         console.error("Match error:", e);
-        // Fall back to demo match on network error
-        addLog("Switching to cached network data...", "sys");
-        await delay(300);
-        addLog(`Compatible profile detected: ${DEMO_MATCH.other_user_name}`, "filter");
-        await delay(400);
-        addLog(`Compatibility score computed: ${DEMO_MATCH.compatibility_score}%`, "filter");
-        await delay(300);
-        addLog(`Shared traits: ${DEMO_MATCH.shared_traits.join(", ")}`, "filter");
-        await delay(400);
-        addLog("Match locked.", "done");
-        setPhase(5);
-        setScanState("matched");
-        setTimeout(() => onMatchFound(DEMO_MATCH), 1200);
+        addLog("Network error. Retrying shortly.", "sys");
+        setScanState("waiting");
+        setWaitMessage("Connection interrupted. Tap below to retry.");
       }
     }
 

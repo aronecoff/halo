@@ -122,18 +122,6 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
               >
                 Activate Your Agent
               </button>
-              <button
-                onClick={() => onGetStarted("Investor")}
-                style={{
-                  padding: "10px 28px", borderRadius: 10, cursor: "pointer",
-                  border: "1px solid rgba(139,92,246,0.25)",
-                  background: "rgba(139,92,246,0.06)", color: "#9CA3AF",
-                  fontSize: 13, fontWeight: 500, letterSpacing: 0.5,
-                  transition: "all 0.2s ease",
-                }}
-              >
-                Try Demo
-              </button>
             </motion.div>
           ) : (
             <motion.div

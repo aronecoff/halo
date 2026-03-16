@@ -42,12 +42,11 @@ export async function middleware(request: NextRequest) {
     request.nextUrl.pathname.startsWith("/icons") ||
     request.nextUrl.pathname.startsWith("/photos");
 
-  // Auth gate disabled — open access for testing/demo
-  // When ready for production, re-enable:
-  // if (!session && !isPublicRoute && !isApiRoute && !isStaticAsset) {
-  //   const redirectUrl = new URL("/login", request.url);
-  //   return NextResponse.redirect(redirectUrl);
-  // }
+  // Auth gate — require sign-in for all non-public routes
+  if (!session && !isPublicRoute && !isApiRoute && !isStaticAsset) {
+    const redirectUrl = new URL("/login", request.url);
+    return NextResponse.redirect(redirectUrl);
+  }
 
   if (session && request.nextUrl.pathname === "/login") {
     return NextResponse.redirect(new URL("/", request.url));
