@@ -150,7 +150,7 @@ export async function POST() {
     const userAName = available.find(u => u.id === bestPair![0])?.name || "User A";
     const userBName = available.find(u => u.id === bestPair![1])?.name || "User B";
 
-    // Create match record with full engine output
+    // Create match record (store engine output in response, not all columns exist in DB yet)
     const { data: newMatch, error: insertError } = await serviceClient
       .from("matches")
       .insert({
@@ -164,9 +164,6 @@ export async function POST() {
         conversation_starter: bestResult.conversationStarter,
         shared_traits: bestResult.sharedTraits,
         iris_description: bestResult.irisNarrative,
-        match_dimensions: bestResult.dimensions,
-        complementary_traits: bestResult.complementaryTraits,
-        risk_factors: bestResult.riskFactors,
       })
       .select()
       .single();
@@ -176,7 +173,15 @@ export async function POST() {
       return NextResponse.json({ error: "Failed to create match" }, { status: 500 });
     }
 
-    return NextResponse.json({ match: newMatch }, { status: 201 });
+    // Return match with full engine analysis (dimensions, complementary traits, risks)
+    return NextResponse.json({
+      match: {
+        ...newMatch,
+        match_dimensions: bestResult.dimensions,
+        complementary_traits: bestResult.complementaryTraits,
+        risk_factors: bestResult.riskFactors,
+      },
+    }, { status: 201 });
   } catch (error: unknown) {
     console.error("Match POST error:", error);
     const message = error instanceof Error ? error.message : "Internal server error";
