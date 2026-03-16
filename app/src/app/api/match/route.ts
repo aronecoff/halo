@@ -74,23 +74,55 @@ export async function GET(request: Request) {
   }
 }
 
-// POST: Run the matching engine
-export async function POST() {
+// POST: Find the best match for the current authenticated user
+export async function POST(request: Request) {
   try {
+    // Get current user
+    let userId: string | null = null;
+    try {
+      const supabase = createClientFromRequest(request);
+      const { data: { session } } = await supabase.auth.getSession();
+      userId = session?.user?.id ?? null;
+    } catch {
+      userId = null;
+    }
+
+    if (!userId) {
+      return NextResponse.json({ error: "Authentication required" }, { status: 401 });
+    }
+
     const serviceClient = createServiceClient();
 
-    // Get all users with completed onboarding
+    // Check if user already has an active match
+    const { data: existingMatch } = await serviceClient
+      .from("matches")
+      .select("*")
+      .or(`user_a_id.eq.${userId},user_b_id.eq.${userId}`)
+      .not("status", "in", '("completed","declined")')
+      .limit(1)
+      .maybeSingle();
+
+    if (existingMatch) {
+      const partnerId = existingMatch.user_a_id === userId ? existingMatch.user_b_id : existingMatch.user_a_id;
+      const { data: partner } = await serviceClient.from("users").select("name").eq("id", partnerId).single();
+      return NextResponse.json({
+        match: { ...existingMatch, other_user_name: partner?.name || "Your match" },
+      });
+    }
+
+    // Get all users with completed onboarding (excluding current user)
     const { data: eligibleUsers, error: usersError } = await serviceClient
       .from("users")
       .select("id, name")
-      .eq("onboarding_complete", true);
+      .eq("onboarding_complete", true)
+      .neq("id", userId);
 
     if (usersError) {
       console.error("Users query error:", usersError);
       return NextResponse.json({ error: "Failed to fetch users" }, { status: 500 });
     }
 
-    if (!eligibleUsers || eligibleUsers.length < 2) {
+    if (!eligibleUsers || eligibleUsers.length < 1) {
       return NextResponse.json({ error: "Not enough users for matching" }, { status: 404 });
     }
 
@@ -108,54 +140,58 @@ export async function POST() {
       }
     }
 
-    const available = eligibleUsers.filter(u => !matched.has(u.id));
-    if (available.length < 2) {
-      return NextResponse.json({ error: "Not enough available users for matching" }, { status: 404 });
+    const candidates = eligibleUsers.filter(u => !matched.has(u.id));
+    if (candidates.length < 1) {
+      return NextResponse.json({ error: "No available users to match with" }, { status: 404 });
     }
 
-    // Fetch full profiles with conversation data
-    const userIds = available.map(u => u.id);
+    // Fetch current user's profile + all candidate profiles
+    const allIds = [userId, ...candidates.map(u => u.id)];
     const { data: profiles, error: profilesError } = await serviceClient
       .from("profiles")
       .select("*")
-      .in("user_id", userIds);
+      .in("user_id", allIds);
 
-    if (profilesError || !profiles || profiles.length < 2) {
+    if (profilesError || !profiles) {
+      return NextResponse.json({ error: "Failed to fetch profiles" }, { status: 500 });
+    }
+
+    const myProfile = profiles.find(p => p.user_id === userId);
+    const candidateProfiles = profiles.filter(p => p.user_id !== userId);
+
+    if (!myProfile || candidateProfiles.length < 1) {
       return NextResponse.json({ error: "Not enough profiles for matching" }, { status: 404 });
     }
 
-    // ═══ Run the matching engine on every pair ═══
+    // Run matching engine: current user vs every candidate
     let bestResult: ReturnType<typeof computeMatch> | null = null;
-    let bestPair: [string, string] | null = null;
+    let bestCandidate: string | null = null;
 
-    for (let i = 0; i < profiles.length; i++) {
-      for (let j = i + 1; j < profiles.length; j++) {
-        const result = computeMatch(profiles[i] as Profile, profiles[j] as Profile);
-        if (!bestResult || result.score > bestResult.score) {
-          bestResult = result;
-          bestPair = [profiles[i].user_id, profiles[j].user_id];
-        }
+    for (const candidate of candidateProfiles) {
+      const result = computeMatch(myProfile as Profile, candidate as Profile);
+      if (!bestResult || result.score > bestResult.score) {
+        bestResult = result;
+        bestCandidate = candidate.user_id;
       }
     }
 
-    if (!bestResult || !bestPair) {
+    if (!bestResult || !bestCandidate) {
       return NextResponse.json({ error: "Could not compute match" }, { status: 500 });
     }
+
+    const partnerName = candidates.find(u => u.id === bestCandidate)?.name || "Your match";
 
     // Generate meeting details
     const venue = pickRandom(SF_VENUES);
     const day = pickRandom(DAYS);
     const time = pickRandom(TIME_SLOTS);
 
-    const userAName = available.find(u => u.id === bestPair![0])?.name || "User A";
-    const userBName = available.find(u => u.id === bestPair![1])?.name || "User B";
-
-    // Create match record (store engine output in response, not all columns exist in DB yet)
+    // Create match record
     const { data: newMatch, error: insertError } = await serviceClient
       .from("matches")
       .insert({
-        user_a_id: bestPair[0],
-        user_b_id: bestPair[1],
+        user_a_id: userId,
+        user_b_id: bestCandidate,
         status: "pending",
         compatibility_score: bestResult.score,
         venue: { name: venue.name, area: venue.area, short: venue.short, lat: venue.lat, lng: venue.lng },
@@ -173,10 +209,10 @@ export async function POST() {
       return NextResponse.json({ error: "Failed to create match" }, { status: 500 });
     }
 
-    // Return match with full engine analysis (dimensions, complementary traits, risks)
     return NextResponse.json({
       match: {
         ...newMatch,
+        other_user_name: partnerName,
         match_dimensions: bestResult.dimensions,
         complementary_traits: bestResult.complementaryTraits,
         risk_factors: bestResult.riskFactors,
