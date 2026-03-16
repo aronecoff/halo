@@ -141,7 +141,7 @@ export function OnboardingScreen({ userName, onNext, onProfileReady, scanData }:
     setTimeout(() => inputRef.current?.focus(), 100);
   }, [inputText, typing, done, apiMessages, scrollDown, onNext, onProfileReady, scanContext]);
 
-  const progress = Math.min(qNum, 5);
+  const progress = Math.min(qNum, 2);
 
   return (
     <ScreenWrap k="onboarding">
@@ -150,10 +150,10 @@ export function OnboardingScreen({ userName, onNext, onProfileReady, scanData }:
         <HaloMark size={20} />
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <span style={{ fontSize: 10, fontWeight: 600, color: "#9CA3AF", letterSpacing: 0.5 }}>
-            Question {progress} of ~5
+            Question {progress} of 2
           </span>
           <div style={{ width: 80, height: 3, borderRadius: 2, background: "rgba(255,255,255,0.06)" }}>
-            <div style={{ width: `${Math.min((progress / 5) * 100, 100)}%`, height: "100%", borderRadius: 2, background: "linear-gradient(135deg,#A78BFA,#7C3AED)", transition: "width 0.4s ease" }} />
+            <div style={{ width: `${Math.min((progress / 2) * 100, 100)}%`, height: "100%", borderRadius: 2, background: "linear-gradient(135deg,#A78BFA,#7C3AED)", transition: "width 0.4s ease" }} />
           </div>
         </div>
       </div>
