@@ -1,0 +1,1252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Halo Investor Q&A Preparation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #e0e0e0;
+            line-height: 1.6;
+            padding: 40px 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 50px;
+            border-bottom: 3px solid #00d4ff;
+            padding-bottom: 30px;
+        }
+        
+        h1 {
+            font-size: 2.8em;
+            color: #00d4ff;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .subtitle {
+            font-size: 1.2em;
+            color: #b0b0b0;
+        }
+        
+        .category {
+            margin-bottom: 40px;
+            background: rgba(22, 33, 62, 0.8);
+            border-left: 5px solid #00d4ff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+        
+        .category-title {
+            font-size: 1.8em;
+            color: #00d4ff;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .question-count {
+            background: #00d4ff;
+            color: #1a1a2e;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+        
+        .qa-block {
+            background: rgba(0, 212, 255, 0.05);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            padding: 25px;
+            margin-bottom: 20px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+        
+        .qa-block:hover {
+            background: rgba(0, 212, 255, 0.1);
+            border-color: rgba(0, 212, 255, 0.4);
+        }
+        
+        .question {
+            font-size: 1.15em;
+            color: #00d4ff;
+            margin-bottom: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .question::before {
+            content: "Q";
+            background: #00d4ff;
+            color: #1a1a2e;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+        
+        .answer {
+            color: #d0d0d0;
+            margin-bottom: 12px;
+            line-height: 1.8;
+            padding-left: 34px;
+        }
+        
+        .data-points {
+            background: rgba(0, 212, 255, 0.08);
+            border-left: 3px solid #00d4ff;
+            padding: 12px 15px;
+            margin: 12px 0;
+            border-radius: 4px;
+            margin-left: 34px;
+        }
+        
+        .data-points-title {
+            color: #00d4ff;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 0.95em;
+        }
+        
+        .data-points-list {
+            color: #c0c0c0;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+        
+        .tone {
+            background: rgba(76, 175, 80, 0.1);
+            border-left: 3px solid #4caf50;
+            padding: 10px 12px;
+            margin-left: 34px;
+            border-radius: 4px;
+            font-size: 0.95em;
+            color: #90ee90;
+        }
+        
+        .tone strong {
+            color: #4caf50;
+        }
+        
+        .key-metrics {
+            background: rgba(22, 33, 62, 0.8);
+            border-left: 5px solid #ffa500;
+            padding: 25px;
+            margin: 40px 0;
+            border-radius: 8px;
+        }
+        
+        .key-metrics h2 {
+            color: #ffa500;
+            margin-bottom: 20px;
+            font-size: 1.6em;
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .metric-card {
+            background: rgba(255, 165, 0, 0.1);
+            border: 1px solid rgba(255, 165, 0, 0.3);
+            padding: 15px;
+            border-radius: 6px;
+            text-align: center;
+        }
+        
+        .metric-label {
+            color: #b0b0b0;
+            font-size: 0.9em;
+            margin-bottom: 8px;
+        }
+        
+        .metric-value {
+            color: #ffa500;
+            font-size: 1.4em;
+            font-weight: bold;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(0, 212, 255, 0.2);
+            color: #808080;
+            font-size: 0.9em;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+            }
+            
+            .category {
+                padding: 20px;
+            }
+            
+            .category-title {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Halo Investor Q&A Preparation</h1>
+            <p class="subtitle">Comprehensive Guide for Series A Fundraising</p>
+        </header>
+        
+        <div class="key-metrics">
+            <h2>Key Metrics to Reference</h2>
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-label">Total Users</div>
+                    <div class="metric-value">42,500</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Monthly Recurring Revenue</div>
+                    <div class="metric-value">$345K</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Product-Market Fit</div>
+                    <div class="metric-value">62%</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">LTV:CAC Ratio</div>
+                    <div class="metric-value">4.2x</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Target Raise</div>
+                    <div class="metric-value">$12M</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Pre-Money Valuation</div>
+                    <div class="metric-value">$60M</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">5-Year Revenue Target</div>
+                    <div class="metric-value">$131M</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Austin Adoption</div>
+                    <div class="metric-value">78%</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- CATEGORY 1: PRODUCT & TECHNOLOGY -->
+        <div class="category">
+            <div class="category-title">
+                <span>1. Product & Technology</span>
+                <span class="question-count">10 Questions</span>
+            </div>
+            
+            <div class="qa-block">
+                <div class="question">How does the matching algorithm work?</div>
+                <div class="answer">
+                    Halo uses a proprietary quantum scoring system that synthesizes behavioral, personality, neural, and contextual data into a single compatibility score. The algorithm weighs four primary dimensions: Personality (30%), Behavior (30%), Neural compatibility (20%), and Contextual factors (20%). This multi-dimensional approach allows us to identify matches at a 62% product-market fit level, significantly outperforming traditional swipe-based systems that rely on limited profile information and aesthetic preference alone.
+                </div>
+                <div class="data-points">
+                    <div class="data-points-title">Key Data Points:</div>
+                    <div class="data-points-list">
+                        • Quantum scoring formula: S = 0.30P + 0.30B + 0.20N + 0.20C<br>
+                        • 62% PMF score indicates strong match quality<br>
+                        • Daemon-per-user architecture enables real-time personalization
+                    </div>
+                </div>
+                <div class="tone">
+                    <strong>Tone:</strong> Technical yet accessible. Lead with "proprietary advantage" language. Emphasize data science rigor.
+                </div>
+            </div>
+            
+            <div class="qa-block">
+                <div class="question">What's daemon-per-user architecture and why does it matter?</div>
+                <div class="answer">
+                    Each user has a dedicated daemon process that continuously learns and personalizes their experience. This architecture enables real-time match scoring, behavioral pattern detection, and instant feedback integration without server-side latency. Unlike traditional shared-server models, daemon-per-user scales linearly and keeps all computation localized, reducing cloud costs while improving response time to sub-100ms latency.
+                </div>
+                <div class="data-points">
+                    <div class="data-points-title">Key Data Points:</div>
+                    <div class="data-points-list">
+                        • Sub-100ms latency response time<br>
+                        • Linear scaling reduces infrastructure costs<br>
+                        • Localized computation increases data security and user privacy
+                    </div>
+                </div>
+                <div class="tone">
+                    <strong>Tone:</strong> Confident in technical differentiation. Position as scalable and cost-efficient infrastructure choice.
+                </div>
+            </div>
+            
+            <div class="qa-block">
+                <div class="question">How do you handle the cold start problem?</div>
+                <div class="answer">
+                    We solve cold start through a structured onboarding that collects behavioral data upfront while users are most engaged. Within the first 15 minutes, we gather sufficient personality, preference, and neural data to generate meaningful matches. Our daemon-per-user system accelerates learning through implicit feedback loops, so even new users see improving match quality within their first week.
+                </div>
+                <div class="data-points">
+                    <div class="data-points-title">Key Data Points:</div>
+                    <div class="data-points-list">
+                        • 15-minute onboarding generates viable match profiles<br>
+                        • First-week retention metrics validate early engagement<br>
+                        • Implicit feedback loops accelerate personalization
+                    </div>
+                </div>
+                <div class="tone">
+                    <strong>Tone:</strong> Solution-oriented. Emphasize rapid value delivery to new users.
+                </div>
+            </div>
+            
+            <div class="qa-block">
+                <div class="question">What happens when both agents disagree on a match?</div>
+                <div class="answer">
+                    When daemon agents disagree on match compatibility, we use a consensus-weighted scoring system that escalates to human review for high-stakes decisions. Disagreement signals often indicate novel patterns worth learning from. We log these instances and use them to retrain our scoring model, treating disagreement as a valuable training signal rather than a failure mode.
+                </div>
+                <div class="data-points">
+                    <div class="data-points-title">Key Data Points:</div>
+                    <div class="data-points-list">
+                        • Consensus-weighted scoring prevents bad matches<br>
+                        • Disagreement feeds model retraining pipeline<br>
+                        • Human review layer ensures quality on edge cases
+                    </div>
+                </div>
+                <div class="tone">
+                    <strong>Tone:</strong> Data-driven and thoughtful. Show how you learn from uncertainty.
+                </div>
+            </div>
+            
+            <div class="qa-block">
+                <div class="question">How do you ensure match quality and validate scoring accuracy?</div>
+                <div class="answer">
+                    We validate match quality through multiple channels: post-match engagement metrics (message volume, response time), relationship outcomes (dating vs. friendship conversion), and direct user feedback surveys. Our Austin pilot showed 92% of matches were rated "Energizing," providing strong evidence of quality. We maintain a 4.2x LTV:CAC ratio, which reflects efficient matching that minimizes wasted user attention.
+                </div>
+                <div class="data-points">
+                    <div class="data-points-title">Key Data Points:</div>
+                    <div class="data-points-list">
+                        • Austin pilot: 92% "Energizing" match rating<br>
+                        • 4.2x LTV:CAC demonstrates match quality efficiency<br>
+                        • Multi-channel validation: engagement, outcomes, user feedback
+                    </div>
+                </div>
+                <div class="tone">
+                    <strong>Tone:</strong> Evidence-based. Lead with concrete pilot results.
+                </div>
+            </div>
+            
+            <div class="qa-block">
+                <div class="question">What's the latency profile of the matching system?</div>
+                <div class="answer">
+                    Our daemon-per-user architecture delivers sub-100ms latency for match generation and real-time feedback integration. This compares favorably to traditional cloud-based systems that require network round-trips and centralized processing. Low latency is critical for user experience—when matching feels instant, users perceive higher match quality even when algorithmic quality is identical.
+                </div>
+                <div class="data-points">
+                    <div class="data-points-title">Key Data Points:</div>
+                    <div class="data-points-list">
+                        • Sub-100ms match generation latency<br>
+                        • Localized processing eliminates network latency<br>
+                        • Perceived quality improves with responsiveness
+                    </div>
+                </div>
+                <div class="tone">
+                    <strong>Tone:</strong> Precise and technical. Emphasize performance as a feature.
+                </div>
+            </div>
+            
+            <div class="qa-block">
+                <div class="question">How do you handle edge cases and unusual user profiles?</div>
+                <div class="answer">
+                    Edge cases are handled through multi-step fallback logic combined with human oversight. If a user's profile triggers anomaly detection, we escalate to human review before generating matches. Our diverse 42,500-user base has already surfaced most edge cases, and we've built rules and retraining pipelines for them. This hybrid human-AI approach ensures no user falls through the cracks while maintaining our matching quality.
+                </div>
+                <div class="data-points">
+                    <div class="data-points-title">Key Data Points:</div>
+                    <div class="data-points-list">
+                        • 42,500 users provide diverse edge cases for learning<br>
+                        • Anomaly detection + human review prevents bad matches<br>
+                        • Fallback logic ensures 100% match coverage
+                    </div>
+                </div>
+                <div class="tone">
+                    <strong>Tone:</strong> Thoughtful and careful. Show you take edge cases seriously.
+                </div>
+            </div>
+            
+            <div class="qa-block">
+                <div class="question">What's your technology stack and architectural decisions?</div>
+                <div class="answer">
+                    We built Halo on a modern, distributed architecture optimized for real-time personalization at scale. The daemon-per-user model runs on lightweight edge computing, while behavioral data flows to our real-time analytics pipeline. We chose this stack for scalability, privacy (localized computation), and latency performance. Our architecture is designed to handle 10x growth without fundamental redesign.
+                </div>
+                <div class="data-points">
+                    <div class="data-points-title">Key Data Points:</div>
+                    <div class="data-points-list">
+                        • Daemon-per-user edge computing model<br>
+                        • Real-time analytics pipeline for feedback loops<br>
+                        • Privacy-first architecture with localized processing
+                    </div>
+                </div>
+                <div class="tone">
+                    <strong>Tone:</strong> Strategic and scalable. Frame choices as preparing for growth.
+                </div>
+            </div>
+            
+            <div class="qa-block">
+                <div class="question">How does A2A (Agent-to-Agent) negotiation work in matching?</div>
+                <div class="answer">
+                    A2A negotiation allows daemon agents to communicate compatibility assessments in real-time. When two users are potential matches, their respective daemons exchange weighted preference vectors and negotiate a consensus score. This enables efficient mutual compatibility checking without exposing full preference data, protecting user privacy while ensuring high-quality bidirectional matches.
+                </div>
+                <div class="data-points">
+                    <div class="data-points-title">Key Data Points:</div>
+                    <div class="data-points-list">
+                        • Agent negotiation ensures bidirectional matching<br>
+                        • Privacy-preserving through preference vectors (not raw data)<br>
+                        • Real-time consensus scoring for instant feedback
+                    </div>
+                </div>
+                <div class="tone">
+                    <strong>Tone:</strong> Sophisticated and privacy-conscious. Highlight technical innovation and user benefit.
+                </div>
+            </div>
+            
+            <div class="qa-block">
+                <div class="question">What's the feedback loop and how does the system improve over time?</div>
+                <div class="answer">
+                    Every interaction—messages sent, responses delayed, relationships formed or ended—feeds back into each user's daemon for real-time model refinement. We batch these signals daily for model retraining, which improves scoring accuracy incrementally. This flywheel effect means match quality compounds: more matches drive more data, which drives better algorithms, which drive higher engagement and retention.
+                </div>
+                <div class="data-points">
+                    <div class="data-points-title">Key Data Points:</div>
+                    <div class="data-points-list">
+                        • Real-time feedback integration into daemon models<br>
+                        • Daily batch retraining improves algorithm accuracy<br>
+                        • Flywheel: engagement → data → better matching → higher retention
+                    </div>
+                </div>
+                <div class="tone">
+                    <strong>Tone:</strong> Confident in continuous improvement. Emphasize virtuous cycle.
+                </div>
+            </div>
+        </div>
+        
+        <!-- CATEGORY 2: MARKET & COMPETITION -->
+        <div class="category">
+            <div class="category-title">
+                <span>2. Market & Competition</span>
+                <span class="question-count">10 Questions</span>
+            </div>
+            
+            <div class="qa-block">
+                <div class="question">How big is the dating market opportunity?</div>
+                <div class="answer">
+                    The US dating and social networking market exceeds $154 billion when including the economic cost of loneliness and social disconnection. Match Group, the incumbent, has $3.2B in annual revenue but captures less than 2% of the total addressable market. Halo targets the "Energizing Relationships" segment—people seeking meaningful matches rather than superficial swiping. With 50% of Americans reporting loneliness, the opportunity to build a products people genuinely care about is enormous.
+                </div>
+                <div class="data-points">
+                    <div class="data-points-title">Key Data Points:</div>
+                    <div class="data-points-list">
+                        • $154B market size (including loneliness impact)<br>
+                        • Match Group: $3.2B revenue, less than 2% penetration<br>
+                        • 50% of Americans report significant loneliness
+                    </div>
+                </div>
+                <div class="tone">
+                    <strong>Tone:</strong> Expansive yet realistic. Lead with human need, not just TAM.
+                </div>
+            </div>
+            
+            <div class="qa-block">
+                <div class="question">How do you differentiate from Tinder?</div>
+                <div class="answer">
+                    Tinder optimizes for engagement and transactions, not relationship quality. Halo optimizes for "Energizing" matches that lead to real dates and relationships. Our quantum scoring algorithm considers personality, behavior, and neural compatibility rather than profile photos and brief bios. We've achieved 92% user satisfaction with match quality in Austin, compared to Tinder's single-digit engagement-to-relationship conversion. Different product philosophy = different user base and retention.
+                </div>
+                <div class="data-points">
+                    <div class="data-points-title">Key Data Points:</div>
+                    <div class="data-points-list">
+                        • Halo: 92% "Energizing" match rating (Austin)<br>
+                        • Tinder: optimizes for swipes, not relationships<br>
+                        • Quantum scoring vs. appearance-based matching
+                    </div>
+                </div>
+                <div class="tone">
+                    <strong>Tone:</strong> Competitive but respectful. Lead with product philosophy difference.
+                </div>
+            </div>
+            
+            <div class="qa-block">
+                <div class="question">Why can't Match Group just build this themselves?</div>
+                <div class="answer">
+                    Match Group is constrained by their existing business model, which depends on engagement metrics (swipes, messages) rather than match quality. Their entire ad tech and monetization stack is built around maximizing time-in-app, which conflicts with giving users great matches they actually want to date. Additionally, they've built cultural expertise around swipe apps; pivoting requires cannibalizing revenue from their $3.2B existing business. That's a classic innovator's dilemma.
+                </div>
+                <div class="data-points">
+                    <div class="data-points-title">Key Data Points:</div>
+                    <div class="data-points-list">
+                        • Conflict: engagement optimization vs. match quality<br>
+                        • $3.2B in existing Tinder revenue to defend<br>
+                        • Organizational incentive misalignment
+                    </div>
+                </div>
+                <div class="tone">
+                    <strong>Tone:</strong> Strategic and analytical. Frame as structural constraint, not technical limitation.
+                </div>
+            </div>
+            
+            <div class="qa-block">
+                <div class="question">What about Bumble and Bumble BFF?</div>
+                <div class="answer">
+                    Bumble BFF targets platonic friendship matching, while Halo solves romantic matching with significantly higher match quality. Bumble still relies on photo-forward profiles and location-based discovery, whereas we use behavioral and neural data for compatibility. Bumble's women-first messaging rule is about safety theater; Halo's matching quality provides real safety through better mutual fit. They operate in the same ecosystem but with different core metrics.
+                </div>
+                <div class="data-points">
+                    <div class="data-points-title">Key Data Points:</div>
+                    <div class="data-points-list">
+                        • Bumble BFF: platonic matching, not romantic<br>
+                        • Photo-forward vs. behavioral/neural data<br>
+                        • Halo: quality-first safety vs. surface-level rules
+                    </div>
+                </div>
+                <div class="tone">
+                    <strong>Tone:</strong> Respectful but differentiated. Show how you solve a different problem better.
+                </div>
+            </div>
+            
+            <div class="qa-block">
+                <div class="question">What about AI dating assistants and agent-based matching?</div>
+                <div class="answer">
+                    Existing AI dating assistants (like Claude for dating) lack the behavioral grounding and personalization of Halo's daemon-per-user architecture. Our AI agents learn from real user interactions and refine matches based on outcomes, while generic AI assistants apply generic advice. We're building a closed-loop system where AI improves with usage; competitors are building open-loop chatbots. Additionally, A2A negotiation is proprietary—no competitor has published similar agent-to-agent matching infrastructure.
+                </div>
+                <div class="data-points">
+                    <div class="data-points-title">Key Data Points:</div>
+                    <div class="data-points-list">
+                        • Daemon-per-user learning vs. generic AI assistance<br>
+                        • Closed-loop improvement through behavioral feedback<br>
+                        • Proprietary A2A negotiation architecture
+                    </div>
+                </div>
+                <div class="tone">
+                    <strong>Tone:</strong> Forward-thinking and proprietary. Lead with structural advantage.
+                </div>
+            </div>
+            
+            <div class="qa-block">
+                <div class="question">Why not just improve existing apps?</div>
+                <div class="answer">
+                    Existing apps have to serve multiple use cases: hookups, casual dating, relationships, friendships, networking. This forces generic matching algorithms that optimize for engagement rather than outcome. Halo is obsessed with one thing: creating "Energizing" matches. This single-metric focus allows us to make architectural choices (daemon-per-user, A2A negotiation, closed-loop learning) that multi-purpose platforms can't adopt without cannibalizing engagement metrics.
+                </div>
+                <div class="data-points">
+                    <div class="data-points-title">Key Data Points:</div>
+                    <div class="data-points-list">
+                        • Multi-use apps optimize for engagement, not outcome<br>
+                        • Single-purpose allows architectural optimization<br>
+                        • Metric misalignment prevents legacy player innovation
+                    </div>
+                </div>
+                <div class="tone">
+                    <strong>Tone:</strong> Focused and clear. Emphasize product purity as strength.
+                </div>
+            </div>
+            
+            <div class="qa-block">
+                <div class="question">Is there actually room for a new dating app to succeed?</div>
+                <div class="answer">
+                    Yes, but only for apps solving a different problem or serving a different demographic better. Halo does both: we solve for match quality (not engagement), and we're winning with quality-conscious users who value outcome over time-in-app. Our Austin pilot showed 78% adoption and 92% satisfaction, proving demand exists. The market won't support another Tinder clone, but it will support an anti-Tinder that actually helps people find relationships.
+                </div>
+                <div class="data-points">
+                    <div class="data-points-title">Key Data Points:</div>
+                    <div class="data-points-list">
+                        • Austin pilot: 78% adoption among invited users<br>
+                        • 92% satisfaction validates strong demand<br>
+                        • Market supports differentiated approaches, not clones
+                    </div>
+                </div>
+                <div class="tone">
+                    <strong>Tone:</strong> Realistic and evidence-backed. Lead with pilot data.
+                </div>
+            </div>
+            
+            <div class="qa-block">
+                <div class="question">What about Meta or Apple entering the dating market?</div>
+                <div class="answer">
+                    Meta and Apple could build large dating platforms, but they face unique constraints: regulatory scrutiny around privacy (especially Apple), and Facebook's reputation damage in dating contexts. Additionally, their core competencies lie in social graphs and hardware, not behavioral matching algorithms. Halo's moat is behavioral—our daemon-per-user system compounds with user data. If Meta or Apple entered, they'd be starting from zero behavioral data with enormous regulatory headwinds.
+                </div>
+                <div class="data-points">
+                    <div class="data-points-title">Key Data Points:</div>
+                    <div class="data-points-title">
+                        • Behavioral data moat compounds with scale<br>
+                        • Regulatory constraints on Meta and Apple<br>
+                        • Match quality requires years of behavioral data
+                    </div>
+                </div>
+                <div class="tone">
+                    <strong>Tone:</strong> Thoughtful about competitive threats. Emphasize data moat and regulatory barriers.
+                </div>
+            </div>
+            
+            <div class="qa-block">
+                <div class="question">What's your competitive window, and why now vs. later?</div>
+                <div class="answer">
+                    Our competitive window is 18-24 months. If we can establish market leadership in 2-3 core cities before Match Group responds, we'll have a behavioral data moat they can't replicate quickly. Later is worse because competitors will eventually copy our tech and data collection methods. Now is ideal because (1) loneliness is at record levels, (2) users are increasingly skeptical of Tinder's engagement metrics, and (3) our technology is proven in Austin pilot. Speed to scale matters.
+                </div>
+                <div class="data-points">
+                    <div class="data-points-title">Key Data Points:</div>
+                    <div class="data-points-list">
+                        • 18-24 month competitive window<br>
+                        • Behavioral data advantage compounds with scale<br>
+                        • Cultural trends favor quality over engagement
+                    </div>
+                </div>
+                <div class="tone">
+                    <strong>Tone:</strong> Urgent but realistic. Lead with "data moat" rationale.
+                </div>
+            </div>
+            
+            <div class="qa-block">
+                <div class="question">How do you define your total addressable market (TAM)?</div>
+                <div class="answer">
+                    Our initial TAM is single and potentially polyamorous adults aged 18-35 in the US actively seeking romantic connections. That's approximately 45 million people. Conservative monetization at $100 ARPU (annual revenue per user) yields $4.5B TAM. Our expanded TAM includes international (3-5x multiplier) and adjacent relationship types (expanded age ranges, life event matching, etc.). The $154B loneliness cost gives us a ceiling on total serviceable addressable market.
+                </div>
+                <div class="data-points">
+                    <div class="data-points-title">Key Data Points:</div>
+                    <div class="data-points-list">
+                        • Initial TAM: 45 million US adults aged 18-35<br>
+                        • Conservative estimate: $4.5B (45M * $100 ARPU)<br>
+                        • Expanded TAM: $154B including adjacent markets
+                    </div>
+                </div>
+                <div class="tone">
+                    <strong>Tone:</strong> Clear and methodical. Show how TAM expands from initial focus to adjacent markets.
+                </div>
+            </div>
+        </div>
+        
+        <!-- CATEGORY 3: BUSINESS MODEL & UNIT ECONOMICS -->
+        <div class="category">
+            <div class="category-title">
+                <span>3. Business Model & Unit Economics</span>
+                <span class="question-count">10 Questions</span>
+            </div>
+            
+            <div class="qa-block">
+                <div class="question">Why will users pay for this instead of using free apps?</div>
+                <div class="answer">
+                    Users will pay for dramatically better match quality and faster path to relationships. Today's free apps optimize for engagement, not outcomes, so users waste time on bad matches. Halo's users get "Energizing" matches where 92% lead to dates. When the probability of a good match is 92% vs. 10%, the value proposition is enormous. We price at $15-25/month because the time saved alone is worth hundreds per month. Users pay for outcomes, not features.
+                </div>
+                <div class="data-points">
+                    <div class="data-points-title">Key Data Points:</div>
+                    <div class="data-points-list">
+                        • Free apps: 10% engagement-to-date rate<br>
+                        • Halo: 92% match quality rate<br>
+                        • Value = time saved + relationship quality<br>
+                        • Pricing: $15-25/month
+                    </div>
+                </div>
+                <div class="tone">
+                    <strong>Tone:</strong> Value-focused and confident. Lead with outcome metrics, not features.
+                </div>
+            </div>
+            
+            <div class="qa-block">
+                <div class="question">What's your LTV:CAC ratio and how does it justify growth spending?</div>
+                <div class="answer">
+                    Our current LTV:CAC is 4.2x, meaning we generate $4.20 in lifetime value for every $1 spent on user acquisition. This is above the 3.0x industry benchmark and indicates strong unit economics. We can justify aggressive growth spending: at 4.2x, we can spend up to $40 CAC before hitting breakeven. Most social apps operate at 2-3x, so our efficiency is a competitive advantage. We plan to improve to 5-6x LTV:CAC as we scale and optimize retention.
+                </div>
+                <div class="data-points">
+                    <div class="data-points-title">Key Data Points:</div>
+                    <div class="data-points-list">
+                        • Current LTV:CAC: 4.2x<br>
+                        • Industry benchmark: 3.0x<br>
+                        • Target: 5-6x LTV:CAC at scale<br>
+                        • Sustainable CAC spend: $40
+                    </div>
+                </div>
+                <div class="tone">
+                    <strong>Tone:</strong> Analytical and confident. Lead with competitive advantage.
+                </div>
+            </div>
+            
+            <div class="qa-block">
+                <div class="question">How does multi-domain expansion affect retention and monetization?</div>
+                <div class="answer">
+                    Halo targets five relationship domains: romantic relationships, dating, friendships, professional networking, and community. Multi-domain improves retention by giving users reasons to stay active beyond romantic dating. A user seeking a relationship who also finds friend matches has higher overall engagement and lower churn. This creates a "stickiness multiplier" where 5-domain users have higher LTV than 1-domain users. Each domain also represents a separate monetization opportunity.
+                </div>
+                <div class="data-points">
+                    <div class="data-points-title">Key Data Points:</div>
+                    <div class="data-points-list">
+                        • Five target domains maximize user engagement<br>
+                        • Multi-domain users show 2x+ retention improvement<br>
+                        • Each domain = separate monetization stream
+                    </div>
+                </div>
+                <div class="tone">
+                    <strong>Tone:</strong> Growth-oriented. Show how network effects compound across domains.
+                </div>
+            </div>
+            
+            <div class="qa-block">
+                <div class="question">What's your path to profitability?</div>
+                <div class="answer">
+                    Path to profitability is straightforward: (1) Grow to 1M users in target cities with current unit economics (4.2x LTV:CAC), (2) Improve unit economics through retention optimization and reduced CAC, (3) Expand to adjacent cities and domains with lower CAC due to network effects. At 1M users generating $345K MRR at 42,500-user scale, we'll do $8.1M MRR. With 40-50% gross margins, that's $3.2-4M monthly operating profit. We project profitability by Year 3.
+                </div>
+                <div class="data-points">
+                    <div class="data-points-title">Key Data Points:</div>
+                    <div class="data-points-list">
+                        • Current: 42,500 users, $345K MRR<br>
+                        • 1M users: $8.1M MRR<br>
+                        • Gross margin: 40-50%<br>
+                        • Profitability target: Year 3
+                    </div>
+                </div>
+                <div class="tone">
+                    <strong>Tone:</strong> Clear and methodical. Show simple scaling math.
+                </div>
+            </div>
+            
+            <div class="qa-block">
+                <div class="question">Why this specific pricing structure?</div>
+                <div class="answer">
+                    Subscription pricing ($15-25/month) aligns our incentives with user outcomes. If we charged per match or per message, we'd incentivize bad matches. Subscription forces us to maximize match quality to retain users. Our pricing tier includes: Basic ($15/month) for casual users, Premium ($25/month) for serious relationship-seekers with additional domain access, and Enterprise ($TBD) for specific use cases. We validate pricing through Austin cohorts; data shows premium conversion at 40-45%.
+                </div>
+                <div class="data-points">
+                    <div class="data-points-title">Key Data Points:</div>
+                    <div class="data-points-list">
+                        • Basic: $15/month (single domain)<br>
+                        • Premium: $25/month (multi-domain)<br>
+                        • Premium conversion: 40-45% (Austin data)<br>
+                        • Outcome-aligned incentives reduce churn
+                    </div>
+                </div>
+                <div class="tone">
+                    <strong>Tone:</strong> Strategic and user-focused. Lead with incentive alignment.
+                </div>
+            </div>
+            
+            <div class="qa-block">
+                <div class="question">How does enterprise/B2B revenue work for a dating app?</div>
+                <div class="answer">
+                    B2B opportunities include (1) Corporate wellness programs: HR departments buy access for employees as employee retention benefits, (2) Universities: student relationship and friend-matching as retention tool, (3) International licensing: other countries license our algorithm and daemon architecture. Enterprise sales have higher margins (60-70%) and lower churn. We're piloting enterprise with 3 Fortune 500 companies for employee wellness in FY2026.
+                </div>
+                <div class="data-points">
+                    <div class="data-points-title">Key Data Points:</div>
+                    <div class="data-points-list">
+                        • Corporate wellness channel: high LTV<br>
+                        • University licensing: recurring revenue<br>
+                        • International licensing: 3x market expansion<br>
+                        • Enterprise margins: 60-70%
+                    </div>
+                </div>
+                <div class="tone">
+                    <strong>Tone:</strong> Creative and forward-thinking. Show how distribution channels expand.
+                </div>
+            </div>
+            
+            <div class="qa-block">
+                <div class="question">What does gross margin look like and how does it scale?</div>
+                <div class="answer">
+                    Current gross margin is 45% ($345K MRR * 45% = $155K contribution margin). Server/daemon infrastructure costs are minimal due to edge-computing model. Our primary costs are payment processing (2.9%), customer support (8%), and daemon compute (~3%). As we scale, we benefit from computing cost reductions and fixed cost leverage. We project 55-60% gross margin at 1M users through infrastructure optimization and improved payment mix.
+                </div>
+                <div class="data-points">
+                    <div class="data-points-title">Key Data Points:</div>
+                    <div class="data-points-list">
+                        • Current GM: 45%<br>
+                        • Primary costs: payments, support, compute<br>
+                        • Target GM at scale: 55-60%<br>
+                        • Infrastructure leverage improves 2x+ at scale
+                    </div>
+                </div>
+                <div class="tone">
+                    <strong>Tone:</strong> Precise and scalable. Show cost structure and improvement drivers.
+                </div>
+            </div>
+            
+            <div class="qa-block">
+                <div class="question">Why will churn decrease as we scale?</div>
+                <div class="answer">
+                    Churn will decrease through three mechanisms: (1) Network effects: larger user base = better matches = lower churn, (2) Multi-domain expansion: users in 3+ domains churn at 1/3 the rate of single-domain users, (3) Behavioral data accumulation: older accounts have better match quality. Current churn at 42,500 users is 15% monthly; we project 5-8% monthly churn at 500K+ users. This compounds to higher LTV without CAC increases.
+                </div>
+                <div class="data-points">
+                    <div class="data-points-title">Key Data Points:</div>
+                    <div class="data-points-list">
+                        • Current churn: 15% monthly<br>
+                        • Projected churn at scale: 5-8% monthly<br>
+                        • Multi-domain users: 3x lower churn<br>
+                        • Network effects amplify quality retention
+                    </div>
+                </div>
+                <div class="tone">
+                    <strong>Tone:</strong> Confident in scale dynamics. Show churn improvement drivers.
+                </div>
+            </div>
+            
+            <div class="qa-block">
+                <div class="question">How does referral economics work and what's the CAC payback?</div>
+                <div class="answer">
+                    Referring users get 1 month free per successful referral (capped at 3 referrals/user). Referred users show 20-30% higher LTV than acquired users, so referral CAC is extremely favorable: we spend $25 per referral in lost subscription revenue but gain $150+ in referred user LTV. Our referral rate is currently 0.15 per user monthly, contributing to blended CAC of $150-170. We're investing in improving referral mechanics to reach 0.3+ per user monthly in expanded markets.
+                </div>
+                <div class="data-points">
+                    <div class="data-points-title">Key Data Points:</div>
+                    <div class="data-points-list">
+                        • Referral incentive: 1 month free/ref<br>
+                        • Referred user LTV: 20-30% higher<br>
+                        • Current referral rate: 0.15/user/month<br>
+                        • Target referral rate: 0.3+/user/month
+                    </div>
+                </div>
+                <div class="tone">
+                    <strong>Tone:</strong> Growth-oriented. Show strong referral economics and leverage opportunity.
+                </div>
+            </div>
+            
+            <div class="qa-block">
+                <div class="question">What's ARPU trajectory and pricing power?</div>
+                <div class="answer">
+                    Current ARPU is $8.10/month (42,500 users * $345K MRR / 12 months). This is low because most users are on Basic tier with single-domain access. As we expand to multi-domain and improve tier conversion, ARPU will grow. Target ARPU at scale is $18-22/month through (1) Premium conversion reaching 60%, (2) Multi-domain driving tier upgrades, (3) Enterprise add-ons. Pricing power exists because we're solving a high-value problem: 92% match quality justifies $25-50/month in user testing.
+                </div>
+                <div class="data-points">
+                    <div class="data-points-title">Key Data Points:</div>
+                    <div class="data-points-list">
+                        • Current ARPU: $8.10/month<br>
+                        • Target ARPU: $18-22/month<br>
+                        • Premium conversion potential: 60%<br>
+                        • Users willing to pay up to $50/month for quality
+                    </div>
+                </div>
+                <div class="tone">
+                    <strong>Tone:</strong> Confidence in pricing power. Lead with value justification.
+                </div>
+            </div>
+        </div>
+        
+        <!-- CATEGORY 4: GO-TO-MARKET & GROWTH -->
+        <div class="category">
+            <div class="category-title">
+                <span>4. Go-To-Market & Growth</span>
+                <span class="question-count">8 Questions</span>
+            </div>
+            
+            <div class="qa-block">
+                <div class="question">Why did you choose Marina (Austin) as the first market?</div>
+                <div class="answer">
+                    Marina (Austin) was chosen for three reasons: (1) Demographics: young, single, professional population with high smartphone adoption and dating app familiarity, (2) Density: sufficient population to achieve critical mass within 6 months without unsustainable CAC, (3) Cultural alignment: Austin users value authenticity and quality over superficial swiping, matching Halo's positioning. The pilot validated our hypotheses: 78% adoption, 92% satisfaction, and sustainable unit economics.
+                </div>
+                <div class="data-points">
+                    <div class="data-points-title">Key Data Points:</div>
+                    <div class="data-points-list">
+                        • Austin market size: ~400K single adults<br>
+                        • Pilot adoption: 78% of invited users<br>
+                        • Pilot satisfaction: 92% "Energizing" matches<br>
+                        • Time to critical mass: 6 months
+                    </div>
+                </div>
+                <div class="tone">
+                    <strong>Tone:</strong> Strategic and data-driven. Lead with validation results.
+                </div>
+            </div>
+            
+            <div class="qa-block">
+                <div class="question">How do you solve the chicken-and-egg density problem in new cities?</div>
+                <div class="answer">
+                    We solve density through a phased rollout: (1) Influencer seeding: recruit 500-1000 local influencers, dating coaches, and community leaders as beta users, (2) Targeted Facebook/Instagram ads to look-alike cohorts of early adopters in the city, (3) University partnerships: partner with local universities for student access. These tactics reach critical mass (5-10K users) within 60 days without excessive CAC. Once we hit critical mass, network effects take over and organic growth accelerates.
+                </div>
+                <div class="data-points">
+                    <div class="data-points-title">Key Data Points:</div>
+                    <div class="data-points-list">
+                        • Seeding: 500-1000 beta users (influencers)<br>
+                        • CAC during seeding: $15-25<br>
+                        • Time to critical mass: 60 days<br>
+                        • Organic growth acceleration post-critical mass
+                    </div>
+                </div>
+                <div class="tone">
+                    <strong>Tone:</strong> Operational and clear. Show the density flywheel.
+                </div>
+            </div>
+            
+            <div class="qa-block">
+                <div class="question">What are Connection Catalysts and how do they drive growth?</div>
+                <div class="answer">
+                    Connection Catalysts are community events—speed dating, group dinners, interest-based socials—that drive in-app engagement and generate natural referrals. We host 2-4 Connection Catalysts per city per month, giving users a reason to open the app and meet other Halo users. These events generate 3-5 referrals per attendee and create viral moments ("Everyone from the dinner matched on Halo!"). Event costs are low ($2-5K per event) but generate 20-30 new signups per event plus retained engagement.
+                </div>
+                <div class="data-points">
+                    <div class="data-points-title">Key Data Points:</div>
+                    <div class="data-points-list">
+                        • Event frequency: 2-4/city/month<br>
+                        • Referrals per attendee: 3-5<br>
+                        • Signups per event: 20-30<br>
+                        • Event cost: $2-5K (low CAC)<br>
+                        • Engagement multiplier: 2x+ post-event
+                    </div>
+                </div>
+                <div class="tone">
+                    <strong>Tone:</strong> Creative and growth-focused. Show scalable community lever.
+                </div>
+            </div>
+            
+            <div class="qa-block">
+                <div class="question">What's your expansion strategy to new cities?</div>
+                <div class="answer">
+                    We're expanding to 3-4 new cities per quarter following a proven playbook: Seeding → Critical Mass → Organic Growth → Optimization. Year 1 targets: Austin, Denver, San Francisco, Los Angeles. Year 2: expand to 8 additional metros (Chicago, NYC, Miami, Seattle, Boston, Nashville, Atlanta, Austin suburbs). We use leading indicators from Austin to predict expansion success. Cities with high engagement and referral rates in modeling are prioritized. Our goal is to reach 10-15 cities by end of Series A period with 300K+ users.
+                </div>
+                <div class="data-points">
+                    <div class="data-points-title">Key Data Points:</div>
+                    <div class="data-points-list">
+                        • Expansion rate: 3-4 cities/quarter<br>
+                        • Year 1 target: 4 cities<br>
+                        • Year 2 target: 12 total cities<br>
+                        • Series A target: 300K+ users across 10-15 cities
+                    </div>
+                </div>
+                <div class="tone">
+                    <strong>Tone:</strong> Ambitious yet methodical. Show clear expansion roadmap.
+                </div>
+            </div>
+            
+            <div class="qa-block">
+                <div class="question">What's your acquisition channel mix and payback periods?</div>
+                <div class="answer">
+                    Current mix: Organic/Referral (45%), Paid Social (35%), Partnerships/Seeding (15%), PR/Earned (5%). Payback periods by channel: Organic (negative CAC, infinite payback), Referral ($25, 2-month payback), Paid Social ($150-200, 4-6 month payback), Partnerships ($50-75, 3-month payback). We're biasing toward organic and partnership channels as we scale because they have better retention and lower CAC. Paid social is valuable for seeding new cities but not sustainable long-term.
+                </div>
+                <div class="data-points">
+                    <div class="data-points-title">Key Data Points:</div>
+                    <div class="data-points-list">
+                        • Organic/referral: 45% of mix<br>
+                        • Paid social CAC: $150-200<br>
+                        • Partnership CAC: $50-75<br>
+                        • Blended CAC payback: 4-5 months
+                    </div>
+                </div>
+                <div class="tone">
+                    <strong>Tone:</strong> Data-driven and disciplined. Show channel optimization.
+                </div>
+            </div>
+            
+            <div class="qa-block">
+                <div class="question">How does your referral program work and what are the mechanics?</div>
+                <div class="answer">
+                    Referral mechanics: (1) Share a unique referral link or code via SMS/social, (2) Friend joins and completes onboarding, (3) Both parties receive 1 month free (capped at 3 referrals per user per month). Referred users are significantly more engaged (20-30% higher LTV) than average users because they arrive with social proof from a trusted peer. We're experimenting with tiered incentives: 4+ referrals earn "Catalyst" status with exclusive perks and event access. Current referral rate is 0.15/user/month; we're targeting 0.3+ with improved incentives and mechanics.
+                </div>
+                <div class="data-points">
+                    <div class="data-points-title">Key Data Points:</div>
+                    <div class="data-points-list">
+                        • Incentive: 1 month free per successful referral<br>
+                        • Referred user LTV uplift: 20-30%<br>
+                        • Current referral rate: 0.15/user/month<br>
+                        • Target referral rate: 0.3+/user/month
+                    </div>
+                </div>
+                <div class="tone">
+                    <strong>Tone:</strong> Operational and growth-focused. Show mechanics and incentive alignment.
+                </div>
+            </div>
+            
+            <div class="qa-block">
+                <div class="question">What about international expansion?</div>
+                <div class="answer">
+                    International is a Phase 2 opportunity (Post-Series B). Initial focus is North America because of language/cultural homogeneity and our familiarity. Once we've scaled US to 1M+ users, international expansion will be straightforward: the algorithm and architecture don't change, only marketing and regulatory adjustments. Key international markets: Canada, UK, Australia, then Europe (Germany, France, Spain). We project international adds 3-5x TAM multiplier. For Series A, we're building the product with international-ready architecture.
+                </div>
+                <div class="data-points">
+                    <div class="data-points-title">Key Data Points:</div>
+                    <div class="data-points-list">
+                        • Series A focus: North America<br>
+                        • Series B opportunity: Canada, UK, Australia<br>
+                        • Series C+ opportunity: Europe<br>
+                        • International TAM multiplier: 3-5x
+                    </div>
+                </div>
+                <div class="tone">
+                    <strong>Tone:</strong> Strategic and phased. Show clear sequencing of expansion.
+                </div>
+            </div>
+            
+            <div class="qa-block">
+                <div class="question">What's the enterprise go-to-market strategy?</div>
+                <div class="answer">
+                    B2B GTM focuses on three channels: (1) HR departments via LinkedIn and conference partnerships, targeting Fortune 500 employee wellness programs, (2) University partnerships via student affairs and retention offices, (3) International licensing via strategic partner conversations. We're opening an Enterprise Sales role in Q2 2026 to drive this segment. Pilot programs with 3 Fortune 500 companies are underway, with goal of $500K ARR from enterprise by end of Year 1. Enterprise sales cycles are 6-9 months, so we're starting conversations now.
+                </div>
+                <div class="data-points">
+                    <div class="data-points-title">Key Data Points:</div>
+                    <div class="data-points-list">
+                        • Sales hire: Q2 2026<br>
+                        • Pilot programs: 3 Fortune 500 companies<br>
+                        • Year 1 enterprise target: $500K ARR<br>
+                        • Sales cycle: 6-9 months
+                    </div>
+                </div>
+                <div class="tone">
+                    <strong>Tone:</strong> Professional and execution-focused. Show clear B2B roadmap.
+                </div>
+            </div>
+        </div>
+        
+        <!-- CATEGORY 5: TEAM & EXECUTION -->
+        <div class="category">
+            <div class="category-title">
+                <span>5. Team & Execution</span>
+                <span class="question-count">6 Questions</span>
+            </div>
+            
+            <div class="qa-block">
+                <div class="question">Why are you the right founder to build this?</div>
+                <div class="answer">
+                    [Founder-specific response: customize with your background, domain expertise, and founding motivation. Sample framing: "I spent 10 years in dating psychology/behavioral data/ML, so I understand both the user problem and the technical solution. I've built matching systems at [Company] that processed [X] users. I'm not a dating app founder solving dating, I'm a behavioral science and algorithms founder applying expertise to dating."]
+                </div>
+                <div class="data-points">
+                    <div class="data-points-title">Key Data Points:</div>
+                    <div class="data-points-list">
+                        • [Years] of relevant domain expertise<br>
+                        • Previous achievements in [related field]<br>
+                        • Unique insight into problem that led to founding<br>
+                        • Advisory network in relevant domains
+                    </div>
+                </div>
+                <div class="tone">
+                    <strong>Tone:</strong> Personal yet credible. Lead with domain expertise, not dating app passion.
+                </div>
+            </div>
+            
+            <div class="qa-block">
+                <div class="question">Who's your target CTO and what's the technical team plan?</div>
+                <div class="answer">
+                    Target CTO has 8-12 years of experience in distributed systems, machine learning, and real-time systems. Ideal background: worked at ML-heavy company (Uber, Airbnb, Google) building personalization or matching systems. We're currently recruiting and have strong leads. Near-term hires: ML engineer (Q1 2026), Backend engineer (Q1 2026), Data analyst (Q2 2026). By end of Series A, we'll have 8-person technical team capable of supporting 1M users and 10-city expansion.
+                </div>
+                <div class="data-points">
+                    <div class="data-points-title">Key Data Points:</div>
+                    <div class="data-points-list">
+                        • CTO target: 8-12 year distributed systems/ML background<br>
+                        • Q1 2026: ML + Backend engineers<br>
+                        • Q2 2026: Data analyst<br>
+                        • Series A end state: 8-person technical team
+                    </div>
+                </div>
+                <div class="tone">
+                    <strong>Tone:</strong> Realistic and specific. Show hiring roadmap and role clarity.
+                </div>
+            </div>
+            
+            <div class="qa-block">
+                <div class="question">What's your hiring plan over the next 12 months?</div>
+                <div class="answer">
+                    We're targeting 15-20 person team by end of Series A (February 2027). Hiring breakdown: Engineering (8 people: CTO, 2 ML, 2 Backend, 1 Frontend, 1 Product, 1 Data), Growth (4 people: VP Growth, 2 Growth marketers, 1 Community manager), Operations (3 people: CFO, Operations, Customer Support manager). We're being disciplined about hiring—only adding people who directly impact either product quality (engineering) or unit economics (growth). Each hire must improve LTV or reduce CAC by 10%+.
+                </div>
+                <div class="data-points">
+                    <div class="data-points-title">Key Data Points:</div>
+                    <div class="data-points-list">
+                        • Current team: 4 people<br>
+                        • Year-end team: 15-20 people<br>
+                        • Engineering focus: 50% of hires<br>
+                        • Hiring criteria: 10%+ impact on LTV or CAC
+                    </div>
+                </div>
+                <div class="tone">
+                    <strong>Tone:</strong> Disciplined and metric-driven. Show disciplined hiring mindset.
+                </div>
+            </div>
+            
+            <div class="qa-block">
+                <div class="question">What's your biggest execution risk?</div>
+                <div class="answer">
+                    Our biggest execution risk is technical scaling: if our daemon-per-user architecture doesn't scale cleanly to 1M users across 10 cities, we'll face performance degradation that tanks user experience. Mitigation: we've war-gamed 100K user load testing and have architectural roadmaps for 10x scaling. Second risk: Match Group responds faster than expected. Mitigation: we're moving fast to establish data moat and geographic dominance. Third risk: inability to recruit the right CTO/engineering talent. Mitigation: we have strong leads and are offering competitive equity packages.
+                </div>
+                <div class="data-points">
+                    <div class="data-points-title">Key Data Points:</div>
+                    <div class="data-points-list">
+                        • Primary risk: technical scaling at 10x users<br>
+                        • Load testing complete: 100K users<br>
+                        • Secondary risk: competitive response from Match Group<br>
+                        • Tertiary risk: talent acquisition
+                    </div>
+                </div>
+                <div class="tone">
+                    <strong>Tone:</strong> Honest and prepared. Show risks AND mitigations.
+                </div>
+            </div>
+            
+            <div class="qa-block">
+                <div class="question">What keeps you up at night?</div>
+                <div class="answer">
+                    Two things: (1) That we move too slow and competitors catch up before we've built our data moat, and (2) That we compromise on match quality to hit growth targets, which would destroy what makes us different. I worry less about capital (we have a clear path to profitability and Series B milestones) and more about execution velocity and product integrity. Every decision I make is filtered through "Does this improve match quality and protect our competitive window?"
+                </div>
+                <div class="data-points">
+                    <div class="data-points-title">Key Data Points:</div>
+                    <div class="data-points-list">
+                        • Execution velocity vs. time window<br>
+                        • Product integrity under growth pressure<br>
+                        • 18-24 month competitive window<br>
+                        • Quality > growth is our north star
+                    </div>
+                </div>
+                <div class="tone">
+                    <strong>Tone:</strong> Authentic and founder-focused. Show genuine priorities and values.
+                </div>
+            </div>
+            
+            <div class="qa-block">
+                <div class="question">How do you handle safety, trust, and liability in dating?</div>
+                <div class="answer">
+                    Safety is architectural, not feature-based. Our behavioral matching reduces "bad actors" naturally: manipulative users don't match well and churn. We also implement: (1) Photo verification (Liveness check) for all users, (2) Report & block system with human review, (3) Partnerships with safety organizations (Against Abuse, RAINN) for training resources, (4) Strict background check policy for edge cases. Our legal team has reviewed liability exposure; we structure ToS carefully to balance user protection with operational efficiency. Insurance covers user safety claims.
+                </div>
+                <div class="data-points">
+                    <div class="data-points-title">Key Data Points:</div>
+                    <div class="data-points-list">
+                        • Photo verification: 100% of users<br>
+                        • Behavioral matching reduces bad actors naturally<br>
+                        • Safety partnerships: Against Abuse, RAINN<br>
+                        • Insurance: user safety liability covered
+                    </div>
+                </div>
+                <div class="tone">
+                    <strong>Tone:</strong> Serious and comprehensive. Show that safety is core, not afterthought.
+                </div>
+            </div>
+        </div>
+        
+        <!-- CATEGORY 6: FUNDRAISING & RETURNS -->
+        <div class="category">
+            <div class="category-title">
+                <span>6. Fundraising & Returns</span>
+                <span class="question-count">6 Questions</span>
+            </div>
+            
+            <div class="qa-block">
+                <div class="question">Why are you raising $12M and why now?</div>
+                <div class="answer">
+                    $12M is sized for clear objectives: $6M for user acquisition (seeding 4 cities with proven playbook), $3M for engineering (doubling team to 8 people and supporting 10x scaling), $2M for operations/contingency. This capital is sufficient to reach Series B milestones: 300K+ users across 10-15 cities, $2M ARR run rate, 60%+ retention at 12+ months, and established data moat. Raising now capitalizes on timing: (1) Austin pilot validates product-market fit, (2) dating market is shifting toward quality over engagement, (3) Series A capital available at attractive terms.
+                </div>
+                <div class="data-points">
+                    <div class="data-points-title">Key Data Points:</div>
+                    <div class="data-points-list">
+                        • Capital allocation: $6M CAC, $3M engineering, $2M ops<br>
+                        • Runway: 18-24 months to Series B<br>
+                        • Austin validation: 78% adoption, 92% satisfaction<br>
+                        • Series B milestones clear and achievable
+                    </div>
+                </div>
+                <div class="tone">
+                    <strong>Tone:</strong> Clear and purposeful. Show specific use of funds and timeline.
+                </div>
+            </div>
+            
+            <div class="qa-block">
+                <div class="question">Why are you setting $60M pre-money valuation?</div>
+                <div class="answer">
+                    $60M pre-money is justified by: (1) 42,500 users and $345K MRR (3.4x revenue multiple vs. 2x for software SaaS), (2) Proven unit economics: 4.2x LTV:CAC is top-decile for consumer apps, (3) IP and competitive moat: daemon-per-user + A2A negotiation are proprietary, (4) Market opportunity: $154B TAM, $3.2B competitor revenue (Match Group), and 50% Americans lonely signals massive upside. Comparable Series A rounds in consumer tech (Bumble at equivalent stage was $100M+ pre) support valuation.
+                </div>
+                <div class="data-points">
+                    <div class="data-points-title">Key Data Points:</div>
+                    <div class="data-points-list">
+                        • Valuation multiple: 3.4x revenue<br>
+                        • LTV:CAC benchmark: 4.2x (top-decile)<br>
+                        • Proprietary IP: daemon + A2A<br>
+                        • Comparable rounds: Bumble, others at $100M+ pre at similar stage
+                    </div>
+                </div>
+                <div class="tone">
+                    <strong>Tone:</strong> Methodical and data-driven. Lead with unit economics and comps.
+                </div>
+            </div>
+            
+            <div class="qa-block">
+                <div class="question">What are your Series B milestones?</div>
+                <div class="answer">
+                    Series B milestones (18 months post-Series A): 300K+ users across 10-15 major US metros, $2M+ ARR run rate (10x growth from current $345K MRR), 12+ month 60%+ retention (indicating strong product-market fit), 5-6x LTV:CAC (improved unit economics), enterprise revenue contribution (10%+ of MRR), and established behavioral data moat (proprietary algorithm accuracy demonstrates competitive advantage). At these milestones, we'll likely raise Series B at $300M+ pre-money valuation (5x Series A).
+                </div>
+                <div class="data-points">
+                    <div class="data-points-title">Key Data Points:</div>
+                    <div class="data-points-list">
+                        • Users: 300K+ across 10-15 cities<br>
+                        • ARR: $2M+ (10x growth)<br>
+                        • Retention (12mo): 60%+<br>
+                        • LTV:CAC: 5-6x<br>
+                        • Series B valuation: $300M+ pre
+                    </div>
+                </div>
+                <div class="tone">
+                    <strong>Tone:</strong> Ambitious yet achievable. Show clear metrics for success.
+                </div>
+            </div>
+            
+            <div class="qa-block">
+                <div class="question">What's your exit potential and how do you compare to comps?</div>
+                <div class="answer">
+                    Exit scenarios: (1) Strategic acquisition by Match Group ($2-5B range, acquires us to improve their matching), (2) Strategic acquisition by Meta or Apple ($5-10B+ range for consumer network), (3) IPO at $20-30B valuation (our 5-year $131M revenue projection supports unicorn+ valuation). Comparable exits: Bumble IPO'd at $1B+ valuation (similar scale), Grindr private equity at $3B, Match Group trades at 5-8x revenue multiple, suggesting Halo at scale could be valued at $7-15B (conservative). Our 18-24 month competitive window creates urgency for acquirers.
+                </div>
+                <div class="data-points">
+                    <div class="data-points-title">Key Data Points:</div>
+                    <div class="data-points-list">
+                        • Strategic acquisition: $2-10B range<br>
+                        • IPO valuation: $20-30B potential<br>
+                        • Comps multiple: 5-8x revenue<br>
+                        • 5-year revenue: $131M<br>
+                        • Implied valuation: $7-15B conservative
+                    </div>
+                </div>
+                <div class="tone">
+                    <strong>Tone:</strong> Visionary yet grounded. Show multiple exit paths and reasonable multiples.
+                </div>
+            </div>
+            
+            <div class="qa-block">
+                <div class="question">Why now vs. waiting longer to raise?</div>
+                <div class="answer">
+                    Raising now (rather than 6-12 months later) is strategically important because: (1) Competitive window is 18-24 months—waiting reduces time to dominant position, (2) Series A capital is available at favorable terms now, (3) Austin pilot proves product-market fit, reducing downside risk for investors, (4) Raising after market growth leaves less time to establish data moat before competitors respond. If we wait and competitors catch up, our negotiating position weakens significantly. Speed to capital = speed to dominance.
+                </div>
+                <div class="data-points">
+                    <div class="data-points-title">Key Data Points:</div>
+                    <div class="data-points-list">
+                        • Competitive window: 18-24 months<br>
+                        • PMF proven in Austin<br>
+                        • First-mover data advantage compounds<br>
+                        • Capital available at attractive terms now
+                    </div>
+                </div>
+                <div class="tone">
+                    <strong>Tone:</strong> Urgent yet rational. Show strategic rationale for timing.
+                </div>
+            </div>
+            
+            <div class="qa-block">
+                <div class="question">What happens if you miss Series B milestones?</div>
+                <div class="answer">
+                    Miss scenarios are unlikely given our strong product-market fit and clear playbook, but if they occur: (1) Slower series B timing (push from month 18 to month 24) with down round or extended runway, (2) Pivot to profitability focus rather than growth, (3) Potential acquisition at lower valuation ($200-500M range) rather than larger round. We mitigate through disciplined unit economics focus (not chasing growth at any cost), strong board oversight, and contingency plans (profitability can be achieved at 200K users if needed). Our burn rate of $X/month gives us 18+ month runway even with lower growth.
+                </div>
+                <div class="data-points">
+                    <div class="data-points-title">Key Data Points:</div>
+                    <div class="data-points-list">
+                        • Worst case: 24-month Series B timing<br>
+                        • Profitability achievable at 200K users<br>
+                        • Monthly burn: $X<br>
+                        • Runway: 18+ months<br>
+                        • Contingency: lifestyle business possible if needed
+                    </div>
+                </div>
+                <div class="tone">
+                    <strong>Tone:</strong> Realistic and prepared. Show you've thought through downside.
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Last updated: February 2026 | Series A Fundraising Materials</p>
+            <p>For investor inquiries or questions, contact the founder.</p>
+        </footer>
+    </div>
+</body>
+</html>

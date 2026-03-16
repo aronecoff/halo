@@ -1,0 +1,49 @@
+{
+  "expo": {
+    "name": "HALO",
+    "slug": "halo",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "scheme": "halo",
+    "userInterfaceStyle": "dark",
+    "newArchEnabled": false,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#07070D"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.haloconnections.app",
+      "infoPlist": {
+        "NSContactsUsageDescription": "HALO uses your contacts to understand your social patterns and build your personality profile.",
+        "NSPhotoLibraryUsageDescription": "HALO analyzes your photo library metadata to understand your lifestyle and interests.",
+        "NSLocationWhenInUseUsageDescription": "HALO uses your location to find matches near you and guide you to meeting venues."
+      }
+    },
+    "android": {
+      "package": "com.haloconnections.app",
+      "adaptiveIcon": {
+        "backgroundColor": "#07070D"
+      },
+      "permissions": [
+        "READ_CONTACTS",
+        "READ_EXTERNAL_STORAGE",
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "READ_SMS"
+      ]
+    },
+    "plugins": [
+      "expo-router",
+      "expo-secure-store",
+      "expo-font"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": ""
+      }
+    }
+  }
+}

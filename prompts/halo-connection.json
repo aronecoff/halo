@@ -1,0 +1,9 @@
+{
+  "prompt": "Ultra-realistic overhead drone photograph of a vibrant city intersection at golden hour. Two small figures walking toward each other from opposite crosswalks, about to converge at the center. Long dramatic shadows stretching across warm asphalt. Surrounding pedestrians blurred in motion. The two central figures sharp and in focus, one wearing a dark jacket, the other a light coat. Urban texture: painted crosswalk lines slightly worn, subtle tire marks, fallen autumn leaves. Shot with DJI Mavic 3 at 24mm equivalent, f/2.8, ISO 100. Golden warm light raking across the scene. Natural color grading with deep shadows and warm highlights. Documentary aerial photography. Do not beautify or stylize. Raw unprocessed feel.",
+  "negative_prompt": "blurry, low resolution, CGI, cartoon, anime, illustration, painting, oversaturated, neon, studio lighting, stock photo, beautification, skin smoothing, plastic texture, artificial colors, HDR overdone, symmetrical composition",
+  "api_parameters": {
+    "aspect_ratio": "4:5",
+    "resolution": "2K",
+    "output_format": "png"
+  }
+}

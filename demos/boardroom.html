@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HALO — Boardroom Demo</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: #07070d;
+    color: #e0e0e0;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  /* FULL SCREEN PHASES */
+  .screen {
+    position: absolute;
+    inset: 0;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    transition: opacity 0.5s;
+  }
+  .screen.active { display: flex; }
+
+  /* ===== SCREEN 1: COLLECT CARDS ===== */
+  #collectScreen {
+    background: linear-gradient(135deg, #07070d, #0f0f1a);
+    padding: 40px;
+  }
+
+  .header-badge {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #8b5cf6;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  .main-title {
+    font-size: 42px;
+    font-weight: 800;
+    letter-spacing: 8px;
+    background: linear-gradient(135deg, #a78bfa, #7c3aed, #6d28d9);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 6px;
+  }
+
+  .sub-title {
+    font-size: 14px;
+    color: #6b7280;
+    margin-bottom: 50px;
+    letter-spacing: 1px;
+  }
+
+  .cards-row {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 40px;
+  }
+
+  /* INDEX CARD */
+  .index-card {
+    width: 200px;
+    height: 270px;
+    perspective: 800px;
+    cursor: pointer;
+  }
+
+  .card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+  }
+
+  .index-card.flipped .card-inner { transform: rotateY(180deg); }
+
+  .card-face {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .card-front {
+    background: linear-gradient(145deg, #1a1a2e, #16162a);
+    border: 1px solid rgba(139,92,246,0.2);
+    box-shadow: 0 8px 40px rgba(0,0,0,0.4);
+  }
+
+  .card-front .vc-label {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #6b7280;
+    margin-bottom: 8px;
+  }
+
+  .card-front .vc-name {
+    font-size: 18px;
+    font-weight: 700;
+    color: #f3f4f6;
+    margin-bottom: 20px;
+  }
+
+  .card-front .card-status {
+    font-size: 12px;
+    color: #4b5563;
+    margin-top: 16px;
+  }
+
+  .card-front .card-status.picked {
+    color: #4ade80;
+    font-weight: 600;
+  }
+
+  .sport-options {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .sport-btn {
+    width: 100%;
+    padding: 10px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(139,92,246,0.15);
+    color: #c4b5fd;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Inter', sans-serif;
+    text-align: center;
+  }
+
+  .sport-btn:hover {
+    background: rgba(139,92,246,0.15);
+    border-color: rgba(139,92,246,0.4);
+  }
+
+  .sport-btn.selected {
+    background: rgba(139,92,246,0.25);
+    border-color: #8b5cf6;
+    color: #fff;
+  }
+
+  .card-back {
+    background: linear-gradient(145deg, #1e1b4b, #1a1a2e);
+    border: 2px solid #8b5cf6;
+    transform: rotateY(180deg);
+    box-shadow: 0 8px 40px rgba(139,92,246,0.2);
+  }
+
+  .card-back .face-down-text {
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #8b5cf6;
+    font-weight: 600;
+  }
+
+  .card-back .halo-mark {
+    font-size: 36px;
+    font-weight: 800;
+    letter-spacing: 6px;
+    color: rgba(139,92,246,0.3);
+    margin-bottom: 8px;
+  }
+
+  .card-back .lock-icon {
+    font-size: 28px;
+    margin-bottom: 12px;
+    opacity: 0.6;
+  }
+
+  /* FEED BUTTON */
+  .feed-btn {
+    padding: 18px 60px;
+    background: linear-gradient(135deg, #7c3aed, #6d28d9);
+    border: none;
+    color: white;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    border-radius: 14px;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.3s;
+    box-shadow: 0 4px 20px rgba(139,92,246,0.3);
+  }
+
+  .feed-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 40px rgba(139,92,246,0.5); }
+  .feed-btn:disabled { opacity: 0.3; cursor: not-allowed; transform: none; box-shadow: none; }
+
+  /* ===== SCREEN 2: AGENT PROCESSING ===== */
+  #processScreen {
+    background: #07070d;
+  }
+
+  .process-center {
+    text-align: center;
+    max-width: 700px;
+  }
+
+  .process-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #f3f4f6;
+    margin-bottom: 30px;
+  }
+
+  .orb-container {
+    width: 200px;
+    height: 200px;
+    margin: 0 auto 30px;
+    position: relative;
+  }
+
+  .orb {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: radial-gradient(circle at 40% 40%, #a78bfa, #6d28d9, #1e1b4b);
+    box-shadow: 0 0 60px rgba(139,92,246,0.4), 0 0 120px rgba(139,92,246,0.15);
+    animation: orbPulse 2s ease-in-out infinite;
+  }
+
+  @keyframes orbPulse {
+    0%, 100% { transform: scale(1); box-shadow: 0 0 60px rgba(139,92,246,0.4); }
+    50% { transform: scale(1.05); box-shadow: 0 0 100px rgba(139,92,246,0.6); }
+  }
+
+  .process-log {
+    text-align: left;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(139,92,246,0.1);
+    border-radius: 14px;
+    padding: 20px;
+    max-height: 250px;
+    overflow-y: auto;
+    font-size: 12px;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+  }
+
+  .process-log .log-line {
+    padding: 3px 0;
+    opacity: 0;
+    animation: fadeIn 0.3s ease forwards;
+    line-height: 1.6;
+  }
+
+  .plog-sys { color: #8b5cf6; }
+  .plog-agent { color: #60a5fa; }
+  .plog-match { color: #f472b6; }
+  .plog-ok { color: #4ade80; }
+  .plog-warn { color: #fbbf24; }
+  .plog-dim { color: #4b5563; }
+
+  @keyframes fadeIn { to { opacity: 1; } }
+
+  /* ===== SCREEN 3: RESULTS ===== */
+  #resultsScreen {
+    background: linear-gradient(135deg, #07070d, #0f0f1a);
+  }
+
+  .results-layout {
+    display: grid;
+    grid-template-columns: 480px 1fr;
+    width: 100%;
+    height: 100%;
+  }
+
+  .results-panel {
+    padding: 28px;
+    overflow-y: auto;
+    border-right: 1px solid rgba(139,92,246,0.15);
+  }
+
+  .results-panel::-webkit-scrollbar { width: 4px; }
+  .results-panel::-webkit-scrollbar-thumb { background: rgba(139,92,246,0.3); border-radius: 4px; }
+
+  .rp-logo {
+    font-size: 24px; font-weight: 800; letter-spacing: 6px;
+    background: linear-gradient(135deg, #a78bfa, #7c3aed);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 4px;
+  }
+  .rp-sub { font-size: 11px; color: #6b7280; letter-spacing: 2px; margin-bottom: 28px; text-transform: uppercase; }
+
+  .section-head {
+    font-size: 11px; text-transform: uppercase; letter-spacing: 2px;
+    color: #8b5cf6; margin: 24px 0 14px; font-weight: 600;
+  }
+
+  /* REVEAL CARDS */
+  .reveal-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .reveal-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(139,92,246,0.15);
+    border-radius: 14px;
+    padding: 16px;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.4s;
+    cursor: pointer;
+  }
+
+  .reveal-card.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .reveal-card:hover {
+    border-color: rgba(139,92,246,0.4);
+    background: rgba(139,92,246,0.06);
+  }
+
+  .reveal-card.active {
+    border-color: #8b5cf6;
+    background: rgba(139,92,246,0.1);
+  }
+
+  .rc-name { font-weight: 700; font-size: 15px; color: #f3f4f6; }
+  .rc-sport { font-size: 24px; margin: 8px 0; }
+  .rc-sport-label { font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+
+  .rc-traits {
+    display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px;
+  }
+
+  .rc-trait {
+    font-size: 10px; padding: 2px 8px;
+    background: rgba(139,92,246,0.1); border-radius: 8px; color: #a78bfa;
+  }
+
+  .rc-coords {
+    font-size: 10px; color: #6b7280; margin-top: 8px; font-family: monospace;
+  }
+
+  /* COMPATIBILITY MATRIX */
+  .compat-matrix {
+    margin-top: 12px;
+  }
+
+  .compat-pair {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(139,92,246,0.08);
+    border-radius: 10px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .compat-pair:hover {
+    background: rgba(139,92,246,0.06);
+    border-color: rgba(139,92,246,0.25);
+  }
+
+  .compat-pair.active {
+    background: rgba(139,92,246,0.1);
+    border-color: #8b5cf6;
+  }
+
+  .cp-names { font-size: 13px; font-weight: 600; color: #e0e0e0; }
+  .cp-bar-bg {
+    width: 120px; height: 6px; background: rgba(255,255,255,0.06);
+    border-radius: 3px; overflow: hidden; margin: 0 12px;
+  }
+  .cp-bar {
+    height: 100%; border-radius: 3px;
+    transition: width 1s ease;
+  }
+  .cp-score { font-size: 13px; font-weight: 700; min-width: 40px; text-align: right; }
+
+  .meeting-block {
+    background: rgba(34,197,94,0.06);
+    border: 1px solid rgba(34,197,94,0.15);
+    border-radius: 12px;
+    padding: 16px;
+    margin-top: 12px;
+  }
+
+  .mb-name { font-weight: 700; color: #4ade80; font-size: 14px; }
+  .mb-reason { font-size: 12px; color: #9ca3af; margin-top: 4px; line-height: 1.5; }
+
+  /* MAP */
+  .results-map { position: relative; }
+  #resultsMap { width: 100%; height: 100%; background: #0f0f1a; }
+  .leaflet-tile-pane { filter: saturate(0.3) brightness(0.6) contrast(1.2); }
+
+  .leaflet-popup-content-wrapper {
+    background: rgba(15,15,26,0.95) !important;
+    border: 1px solid rgba(139,92,246,0.3) !important;
+    border-radius: 12px !important;
+    color: #e0e0e0 !important;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5) !important;
+  }
+  .leaflet-popup-tip { background: rgba(15,15,26,0.95) !important; }
+  .leaflet-popup-content { margin: 14px !important; font-family: 'Inter', sans-serif !important; }
+
+  .map-legend {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    z-index: 999;
+    background: rgba(10,10,15,0.88);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(139,92,246,0.2);
+    border-radius: 12px;
+    padding: 16px;
+    min-width: 200px;
+  }
+
+  .map-legend h4 {
+    font-size: 11px; text-transform: uppercase; letter-spacing: 2px;
+    color: #8b5cf6; margin-bottom: 10px; font-weight: 600;
+  }
+
+  .legend-item {
+    display: flex; align-items: center; gap: 8px;
+    padding: 4px 0; font-size: 12px; color: #9ca3af;
+  }
+
+  .legend-dot {
+    width: 10px; height: 10px; border-radius: 50%; border: 2px solid white;
+  }
+
+  .legend-line { width: 20px; height: 2px; border-radius: 1px; }
+</style>
+</head>
+<body>
+
+<!-- ===== SCREEN 1: COLLECT CARDS ===== -->
+<div class="screen active" id="collectScreen">
+  <div class="header-badge">Halo Agent Engine</div>
+  <div class="main-title">HALO</div>
+  <div class="sub-title">Each VC: pick a sport. Face down. Anonymous. Let the agent do the rest.</div>
+
+  <div class="cards-row" id="cardsRow"></div>
+
+  <button class="feed-btn" id="feedBtn" disabled onclick="feedCards()">
+    FEED INTO AGENT
+  </button>
+</div>
+
+<!-- ===== SCREEN 2: PROCESSING ===== -->
+<div class="screen" id="processScreen">
+  <div class="process-center">
+    <div class="header-badge">Agent Processing</div>
+    <div class="process-title">Analyzing Anonymous Inputs...</div>
+    <div class="orb-container"><div class="orb"></div></div>
+    <div class="process-log" id="processLog"></div>
+  </div>
+</div>
+
+<!-- ===== SCREEN 3: RESULTS ===== -->
+<div class="screen" id="resultsScreen">
+  <div class="results-layout">
+    <div class="results-panel" id="resultsPanel">
+      <div class="rp-logo">HALO</div>
+      <div class="rp-sub">Agent Compatibility Report</div>
+
+      <div class="section-head">The Reveal</div>
+      <div class="reveal-grid" id="revealGrid"></div>
+
+      <div class="section-head">Compatibility Matrix</div>
+      <div class="compat-matrix" id="compatMatrix"></div>
+
+      <div class="section-head">Highest Match</div>
+      <div class="meeting-block" id="meetingBlock"></div>
+    </div>
+    <div class="results-map">
+      <div id="resultsMap"></div>
+      <div class="map-legend" id="mapLegend"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ---- VC CONFIG ----
+const VCS = [
+  { id: 1, name: "VC #1", seat: "Seat A", sport: null },
+  { id: 2, name: "VC #2", seat: "Seat B", sport: null },
+  { id: 3, name: "VC #3", seat: "Seat C", sport: null },
+  { id: 4, name: "VC #4", seat: "Seat D", sport: null },
+];
+
+const SPORTS = ["Football", "Hockey", "Baseball"];
+const SPORT_EMOJI = { "Football": "\u{1F3C8}", "Hockey": "\u{1F3D2}", "Baseball": "\u26BE" };
+const SPORT_COLORS = { "Football": "#22c55e", "Hockey": "#3b82f6", "Baseball": "#f59e0b" };
+
+// Behavioral profile implied by sport choice
+const SPORT_PROFILES = {
+  "Football": {
+    traits: ["competitive", "team-oriented", "strategic", "high-energy", "resilient", "values loyalty"],
+    behavioral: "Gravitates toward structured leadership. Thrives in high-pressure situations. Values collective achievement over individual glory.",
+    attachment: "secure-assertive",
+    eq_range: [78, 88],
+    comm_range: [82, 92],
+  },
+  "Hockey": {
+    traits: ["intense", "fast-paced", "adaptive", "gritty", "loyal", "values toughness"],
+    behavioral: "Prefers rapid decision-making. Comfortable with controlled chaos. Deep loyalty to inner circle. Respects resilience.",
+    attachment: "secure-independent",
+    eq_range: [74, 85],
+    comm_range: [78, 88],
+  },
+  "Baseball": {
+    traits: ["patient", "analytical", "strategic", "traditional", "detail-oriented", "values consistency"],
+    behavioral: "Comfortable with slow burns. Analytical under pressure. Values process over flash. Long-term thinker.",
+    attachment: "secure-measured",
+    eq_range: [80, 92],
+    comm_range: [80, 90],
+  },
+};
+
+// GPS coords in SF for each VC
+const VC_COORDS = [
+  { lat: 37.7955, lng: -122.4210, area: "Pacific Heights" },
+  { lat: 37.7850, lng: -122.4000, area: "Nob Hill" },
+  { lat: 37.7760, lng: -122.4180, area: "Hayes Valley" },
+  { lat: 37.7650, lng: -122.4270, area: "Castro" },
+];
+
+// Meeting spots by sport pairing
+const VENUES = {
+  same: [
+    { name: "The Boardroom SF", lat: 37.7810, lng: -122.4120, reason: "Same wavelength — high-energy venue to match the instant rapport." },
+  ],
+  "Football-Hockey": { name: "Kezar Pub", lat: 37.7680, lng: -122.4530, reason: "Both competitive, high-intensity profiles. Sports bar with edge." },
+  "Football-Baseball": { name: "The Yard at Mission Rock", lat: 37.7710, lng: -122.3890, reason: "Strategy meets patience. Outdoor space encourages strategic conversation." },
+  "Hockey-Baseball": { name: "Zeitgeist", lat: 37.7703, lng: -122.4222, reason: "Grit meets patience. Casual biergarten removes pretense." },
+  "Hockey-Football": { name: "Kezar Pub", lat: 37.7680, lng: -122.4530, reason: "Both competitive, high-intensity profiles. Sports bar with edge." },
+  "Baseball-Football": { name: "The Yard at Mission Rock", lat: 37.7710, lng: -122.3890, reason: "Strategy meets patience. Outdoor space encourages strategic conversation." },
+  "Baseball-Hockey": { name: "Zeitgeist", lat: 37.7703, lng: -122.4222, reason: "Grit meets patience. Casual biergarten removes pretense." },
+};
+
+let pickedCount = 0;
+let resultsMap;
+
+// ---- BUILD CARDS ----
+function buildCards() {
+  const row = document.getElementById('cardsRow');
+  VCS.forEach((vc, i) => {
+    const card = document.createElement('div');
+    card.className = 'index-card';
+    card.id = `card-${vc.id}`;
+    card.innerHTML = `
+      <div class="card-inner">
+        <div class="card-face card-front">
+          <div class="vc-label">${vc.seat}</div>
+          <div class="vc-name">${vc.name}</div>
+          <div class="sport-options" id="opts-${vc.id}">
+            ${SPORTS.map(s => `
+              <button class="sport-btn" onclick="pickSport(${vc.id}, '${s}', this, event)">${SPORT_EMOJI[s]} ${s}</button>
+            `).join('')}
+          </div>
+          <div class="card-status" id="status-${vc.id}">Pick a sport</div>
+        </div>
+        <div class="card-face card-back">
+          <div class="lock-icon">\u{1F512}</div>
+          <div class="halo-mark">HALO</div>
+          <div class="face-down-text">Card Sealed</div>
+        </div>
+      </div>
+    `;
+    row.appendChild(card);
+  });
+}
+
+function pickSport(vcId, sport, btn, e) {
+  e.stopPropagation();
+  const vc = VCS.find(v => v.id === vcId);
+  if (vc.sport) return; // already picked
+
+  vc.sport = sport;
+
+  // Highlight selected
+  const opts = document.getElementById(`opts-${vcId}`);
+  opts.querySelectorAll('.sport-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+
+  // Update status
+  const status = document.getElementById(`status-${vcId}`);
+  status.textContent = "Locked in \u2713";
+  status.classList.add('picked');
+
+  // Flip card face-down after a beat
+  setTimeout(() => {
+    document.getElementById(`card-${vcId}`).classList.add('flipped');
+  }, 600);
+
+  pickedCount++;
+  if (pickedCount === 4) {
+    document.getElementById('feedBtn').disabled = false;
+  }
+}
+
+// ---- FEED CARDS ----
+async function feedCards() {
+  showScreen('processScreen');
+  const log = document.getElementById('processLog');
+
+  const lines = [
+    { text: "Receiving 4 anonymous index cards...", cls: "plog-sys", delay: 500 },
+    { text: "Cards are face-down. Agent has zero knowledge of who picked what.", cls: "plog-dim", delay: 600 },
+    { text: "Ingesting Card A... \u{1F4C4} [SEALED]", cls: "plog-agent", delay: 400 },
+    { text: "Ingesting Card B... \u{1F4C4} [SEALED]", cls: "plog-agent", delay: 300 },
+    { text: "Ingesting Card C... \u{1F4C4} [SEALED]", cls: "plog-agent", delay: 300 },
+    { text: "Ingesting Card D... \u{1F4C4} [SEALED]", cls: "plog-agent", delay: 300 },
+    { text: "All 4 cards ingested. Breaking seals...", cls: "plog-sys", delay: 700 },
+    { text: `Card A revealed: ${SPORT_EMOJI[VCS[0].sport]} ${VCS[0].sport}`, cls: "plog-ok", delay: 500 },
+    { text: `Card B revealed: ${SPORT_EMOJI[VCS[1].sport]} ${VCS[1].sport}`, cls: "plog-ok", delay: 400 },
+    { text: `Card C revealed: ${SPORT_EMOJI[VCS[2].sport]} ${VCS[2].sport}`, cls: "plog-ok", delay: 400 },
+    { text: `Card D revealed: ${SPORT_EMOJI[VCS[3].sport]} ${VCS[3].sport}`, cls: "plog-ok", delay: 400 },
+    { text: "Deploying behavioral inference agents...", cls: "plog-sys", delay: 600 },
+    { text: "Agent-\u03B1: Mapping sport \u2192 behavioral archetype...", cls: "plog-agent", delay: 500 },
+    { text: "Agent-\u03B2: Computing attachment style from preference signal...", cls: "plog-agent", delay: 500 },
+    { text: "Agent-\u03B3: Generating emotional intelligence estimates...", cls: "plog-agent", delay: 500 },
+    { text: "Agent-\u03B4: Cross-referencing all 6 pairwise compatibilities...", cls: "plog-agent", delay: 600 },
+    { text: "Behavioral analysis complete.", cls: "plog-sys", delay: 400 },
+    { text: "Computing GPS coordinates for each profile...", cls: "plog-sys", delay: 500 },
+    { text: "Identifying optimal meeting spots per compatible pair...", cls: "plog-sys", delay: 500 },
+    { text: "REPORT READY \u2714", cls: "plog-ok", delay: 600 },
+  ];
+
+  for (const l of lines) {
+    await sleep(l.delay);
+    const div = document.createElement('div');
+    div.className = 'log-line';
+    const t = new Date().toLocaleTimeString('en-US', { hour12:false, hour:'2-digit', minute:'2-digit', second:'2-digit' });
+    div.innerHTML = `<span class="plog-dim">[${t}]</span> <span class="${l.cls}">${l.text}</span>`;
+    log.appendChild(div);
+    log.scrollTop = log.scrollHeight;
+  }
+
+  await sleep(800);
+  buildResults();
+  showScreen('resultsScreen');
+  setTimeout(() => initResultsMap(), 100);
+}
+
+// ---- BUILD RESULTS ----
+function buildResults() {
+  const grid = document.getElementById('revealGrid');
+  const matrix = document.getElementById('compatMatrix');
+
+  // Assign random EQ/Comm within sport range, assign coords
+  VCS.forEach((vc, i) => {
+    const prof = SPORT_PROFILES[vc.sport];
+    vc.eq = randBetween(prof.eq_range[0], prof.eq_range[1]);
+    vc.comm = randBetween(prof.comm_range[0], prof.comm_range[1]);
+    vc.traits = prof.traits;
+    vc.behavioral = prof.behavioral;
+    vc.attachment = prof.attachment;
+    vc.lat = VC_COORDS[i].lat;
+    vc.lng = VC_COORDS[i].lng;
+    vc.area = VC_COORDS[i].area;
+  });
+
+  // Reveal cards
+  VCS.forEach((vc, i) => {
+    const card = document.createElement('div');
+    card.className = 'reveal-card';
+    card.id = `reveal-${vc.id}`;
+    const col = SPORT_COLORS[vc.sport];
+    card.innerHTML = `
+      <div class="rc-name" style="color:${col}">${vc.name} <span style="color:#6b7280;font-weight:400;font-size:12px">${vc.seat}</span></div>
+      <div class="rc-sport">${SPORT_EMOJI[vc.sport]}</div>
+      <div class="rc-sport-label" style="color:${col}">${vc.sport}</div>
+      <div style="font-size:11px;color:#9ca3af;line-height:1.4;margin-top:6px">${vc.behavioral}</div>
+      <div class="rc-traits">${vc.traits.map(t => `<span class="rc-trait">${t}</span>`).join('')}</div>
+      <div class="rc-coords">${vc.lat.toFixed(4)}°N, ${Math.abs(vc.lng).toFixed(4)}°W · ${vc.area}</div>
+    `;
+    card.onclick = () => focusVC(vc);
+    grid.appendChild(card);
+    setTimeout(() => card.classList.add('show'), 200 + i * 200);
+  });
+
+  // Compatibility pairs (6 total)
+  const pairs = [];
+  for (let i = 0; i < VCS.length; i++) {
+    for (let j = i + 1; j < VCS.length; j++) {
+      const score = computeCompat(VCS[i], VCS[j]);
+      pairs.push({ a: VCS[i], b: VCS[j], score });
+    }
+  }
+  pairs.sort((a, b) => b.score - a.score);
+
+  pairs.forEach((p, idx) => {
+    const pct = Math.round(p.score * 100);
+    const col = pct >= 85 ? '#4ade80' : pct >= 65 ? '#a78bfa' : '#fbbf24';
+    const row = document.createElement('div');
+    row.className = 'compat-pair';
+    row.innerHTML = `
+      <span class="cp-names">${SPORT_EMOJI[p.a.sport]} ${p.a.name} × ${p.b.name} ${SPORT_EMOJI[p.b.sport]}</span>
+      <div class="cp-bar-bg"><div class="cp-bar" style="width:0%;background:${col};" data-w="${pct}%"></div></div>
+      <span class="cp-score" style="color:${col}">${pct}%</span>
+    `;
+    row.onclick = () => focusPair(p);
+    matrix.appendChild(row);
+    setTimeout(() => {
+      row.querySelector('.cp-bar').style.width = pct + '%';
+    }, 600 + idx * 150);
+  });
+
+  // Highest match meeting spot
+  const best = pairs[0];
+  const key = best.a.sport + '-' + best.b.sport;
+  const venue = best.a.sport === best.b.sport ? VENUES.same[0] : VENUES[key];
+  const block = document.getElementById('meetingBlock');
+  block.innerHTML = `
+    <div class="mb-name">${SPORT_EMOJI[best.a.sport]} ${best.a.name} × ${best.b.name} ${SPORT_EMOJI[best.b.sport]} → ${venue.name}</div>
+    <div class="mb-reason">${venue.reason}</div>
+    <div style="font-size:11px;color:#6b7280;margin-top:6px;font-family:monospace">${venue.lat.toFixed(4)}°N, ${Math.abs(venue.lng).toFixed(4)}°W</div>
+  `;
+
+  // Store for map
+  window._pairs = pairs;
+  window._bestVenue = venue;
+}
+
+function computeCompat(a, b) {
+  let base;
+  if (a.sport === b.sport) {
+    base = 0.82 + Math.random() * 0.12; // same sport = high base
+  } else {
+    // Cross-sport compatibility
+    const crossScores = {
+      "Football-Hockey": 0.68, "Hockey-Football": 0.68,
+      "Football-Baseball": 0.52, "Baseball-Football": 0.52,
+      "Hockey-Baseball": 0.48, "Baseball-Hockey": 0.48,
+    };
+    const key = a.sport + '-' + b.sport;
+    base = (crossScores[key] || 0.5) + Math.random() * 0.15;
+  }
+
+  // EQ/Comm bonus
+  const eqDiff = 1 - Math.abs(a.eq - b.eq) / 100;
+  const commDiff = 1 - Math.abs(a.comm - b.comm) / 100;
+  const bonus = (eqDiff * 0.08) + (commDiff * 0.06);
+
+  return Math.min(0.98, base + bonus);
+}
+
+// ---- RESULTS MAP ----
+function initResultsMap() {
+  resultsMap = L.map('resultsMap', { center: [37.7790, -122.4190], zoom: 13, zoomControl: false });
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    maxZoom: 19
+  }).addTo(resultsMap);
+  L.control.zoom({ position: 'bottomright' }).addTo(resultsMap);
+
+  // Add VC markers
+  VCS.forEach(vc => {
+    const col = SPORT_COLORS[vc.sport];
+    const m = L.circleMarker([vc.lat, vc.lng], {
+      radius: 10, fillColor: col, color: 'white', weight: 2, fillOpacity: 0.9
+    }).addTo(resultsMap);
+    m.bindPopup(`
+      <div>
+        <strong style="color:${col};font-size:14px">${vc.name}</strong> ${SPORT_EMOJI[vc.sport]}
+        <div style="color:#9ca3af;font-size:12px;margin-top:4px">${vc.behavioral}</div>
+        <div style="color:#9ca3af;font-size:11px;margin-top:4px">EQ: ${vc.eq} | Comm: ${vc.comm} | ${vc.attachment}</div>
+        <div style="color:#6b7280;font-size:11px;margin-top:4px;font-family:monospace">${vc.lat.toFixed(4)}°N, ${Math.abs(vc.lng).toFixed(4)}°W</div>
+      </div>
+    `);
+    vc.marker = m;
+  });
+
+  // Draw compatibility lines for top pairs
+  const pairs = window._pairs;
+  pairs.forEach(p => {
+    const pct = Math.round(p.score * 100);
+    const opacity = pct >= 80 ? 0.5 : pct >= 65 ? 0.3 : 0.15;
+    L.polyline([[p.a.lat, p.a.lng], [p.b.lat, p.b.lng]], {
+      color: '#8b5cf6', weight: 2, opacity, dashArray: '6 6'
+    }).addTo(resultsMap);
+  });
+
+  // Best match meeting spot
+  const v = window._bestVenue;
+  const meetMarker = L.circleMarker([v.lat, v.lng], {
+    radius: 14, fillColor: '#22c55e', color: 'white', weight: 3, fillOpacity: 0.9
+  }).addTo(resultsMap);
+  meetMarker.bindPopup(`
+    <div>
+      <strong style="color:#4ade80;font-size:14px">${v.name}</strong>
+      <div style="color:#9ca3af;font-size:12px;margin-top:4px">${v.reason}</div>
+      <div style="color:#6b7280;font-size:11px;margin-top:6px;font-family:monospace">${v.lat.toFixed(4)}°N, ${Math.abs(v.lng).toFixed(4)}°W</div>
+    </div>
+  `);
+
+  // Legend
+  const legend = document.getElementById('mapLegend');
+  legend.innerHTML = `
+    <h4>Legend</h4>
+    ${SPORTS.map(s => `<div class="legend-item"><div class="legend-dot" style="background:${SPORT_COLORS[s]}"></div>${SPORT_EMOJI[s]} ${s}</div>`).join('')}
+    <div class="legend-item"><div class="legend-dot" style="background:#22c55e"></div>Meeting Spot</div>
+    <div class="legend-item" style="margin-top:6px"><div class="legend-line" style="background:#8b5cf6"></div>Compatibility Link</div>
+  `;
+}
+
+function focusVC(vc) {
+  document.querySelectorAll('.reveal-card').forEach(c => c.classList.remove('active'));
+  document.getElementById(`reveal-${vc.id}`).classList.add('active');
+  resultsMap.flyTo([vc.lat, vc.lng], 15, { duration: 0.8 });
+  vc.marker.openPopup();
+}
+
+function focusPair(p) {
+  document.querySelectorAll('.compat-pair').forEach(c => c.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+  const group = L.featureGroup([p.a.marker, p.b.marker]);
+  resultsMap.fitBounds(group.getBounds().pad(0.3), { duration: 0.8 });
+}
+
+// ---- UTILS ----
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => { s.classList.remove('active'); });
+  document.getElementById(id).classList.add('active');
+}
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+function randBetween(a, b) { return Math.floor(Math.random() * (b - a + 1)) + a; }
+
+// ---- INIT ----
+buildCards();
+</script>
+</body>
+</html>

@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HALO — Facilitated Conversation</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: #07070d;
+    color: #e0e0e0;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .app {
+    display: grid;
+    grid-template-columns: 320px 1fr 320px;
+    height: 100vh;
+  }
+
+  /* === LEFT PANEL: VC #1 === */
+  .panel-left, .panel-right {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+  }
+
+  .panel-left {
+    background: linear-gradient(180deg, #0a0f1a, #070a12);
+    border-right: 1px solid rgba(59,130,246,0.15);
+  }
+
+  .panel-right {
+    background: linear-gradient(180deg, #1a0a14, #120710);
+    border-left: 1px solid rgba(236,72,153,0.15);
+  }
+
+  .panel-left::-webkit-scrollbar, .panel-right::-webkit-scrollbar, .center-chat::-webkit-scrollbar { width: 4px; }
+  .panel-left::-webkit-scrollbar-thumb { background: rgba(59,130,246,0.3); border-radius: 4px; }
+  .panel-right::-webkit-scrollbar-thumb { background: rgba(236,72,153,0.3); border-radius: 4px; }
+  .center-chat::-webkit-scrollbar-thumb { background: rgba(139,92,246,0.3); border-radius: 4px; }
+
+  /* Profile headers */
+  .profile-header {
+    padding: 24px 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+
+  .ph-label {
+    font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+    font-weight: 600; margin-bottom: 6px;
+  }
+
+  .panel-left .ph-label { color: #60a5fa; }
+  .panel-right .ph-label { color: #f472b6; }
+
+  .ph-name { font-size: 20px; font-weight: 700; color: #f3f4f6; }
+  .ph-sport { font-size: 14px; color: #9ca3af; margin-top: 2px; }
+
+  .ph-stats {
+    display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap;
+  }
+
+  .ph-stat {
+    font-size: 10px; padding: 3px 10px; border-radius: 8px; font-weight: 600;
+  }
+
+  .panel-left .ph-stat { background: rgba(59,130,246,0.1); color: #93c5fd; }
+  .panel-right .ph-stat { background: rgba(236,72,153,0.1); color: #f9a8d4; }
+
+  /* Agent sidebar */
+  .agent-sidebar {
+    flex: 1;
+    padding: 16px 20px;
+  }
+
+  .as-label {
+    font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+    font-weight: 600; margin-bottom: 12px;
+  }
+
+  .panel-left .as-label { color: #3b82f6; }
+  .panel-right .as-label { color: #ec4899; }
+
+  .agent-note {
+    background: rgba(255,255,255,0.03);
+    border-radius: 10px;
+    padding: 12px;
+    margin-bottom: 10px;
+    font-size: 12px;
+    line-height: 1.6;
+    color: #9ca3af;
+    border-left: 3px solid;
+    opacity: 0;
+    transform: translateX(-8px);
+    transition: all 0.4s ease;
+  }
+
+  .agent-note.show { opacity: 1; transform: translateX(0); }
+
+  .panel-left .agent-note { border-color: rgba(59,130,246,0.4); }
+  .panel-right .agent-note { border-color: rgba(236,72,153,0.4); }
+
+  .agent-note .note-type {
+    font-size: 10px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 1.5px; margin-bottom: 4px;
+  }
+
+  .panel-left .note-type { color: #60a5fa; }
+  .panel-right .note-type { color: #f472b6; }
+
+  .note-type.insight { color: #fbbf24 !important; }
+  .note-type.warning { color: #f87171 !important; }
+  .note-type.success { color: #4ade80 !important; }
+
+  /* Emotion gauge */
+  .emotion-gauge {
+    background: rgba(255,255,255,0.03);
+    border-radius: 10px;
+    padding: 12px;
+    margin-bottom: 12px;
+  }
+
+  .eg-label {
+    font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase;
+    color: #6b7280; margin-bottom: 8px; font-weight: 600;
+  }
+
+  .eg-bar-row {
+    display: flex; align-items: center; gap: 8px; margin-bottom: 6px;
+  }
+
+  .eg-bar-label { font-size: 11px; color: #9ca3af; min-width: 70px; }
+  .eg-bar-bg { flex:1; height: 4px; background: rgba(255,255,255,0.06); border-radius: 2px; overflow: hidden; }
+  .eg-bar { height: 100%; border-radius: 2px; transition: width 0.8s ease; }
+  .eg-val { font-size: 11px; color: #e0e0e0; font-weight: 600; min-width: 30px; text-align: right; }
+
+  /* === CENTER: CONVERSATION === */
+  .center {
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(180deg, #0f0f1a, #0a0a12);
+  }
+
+  .center-header {
+    padding: 20px 28px;
+    border-bottom: 1px solid rgba(139,92,246,0.1);
+    text-align: center;
+  }
+
+  .ch-logo {
+    font-size: 22px; font-weight: 800; letter-spacing: 6px;
+    background: linear-gradient(135deg, #a78bfa, #7c3aed);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+
+  .ch-sub {
+    font-size: 11px; color: #6b7280; letter-spacing: 2px; margin-top: 2px; text-transform: uppercase;
+  }
+
+  .center-phase {
+    display: flex; gap: 4px; padding: 12px 28px;
+    border-bottom: 1px solid rgba(139,92,246,0.06);
+  }
+
+  .cp-step {
+    flex: 1; text-align: center; padding: 6px; font-size: 9px;
+    text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600;
+    border-radius: 6px; transition: all 0.5s;
+  }
+
+  .cp-step.pending { color: #4b5563; background: rgba(255,255,255,0.02); }
+  .cp-step.active { color: #a78bfa; background: rgba(139,92,246,0.15); }
+  .cp-step.complete { color: #4ade80; background: rgba(34,197,94,0.08); }
+
+  /* Chat area */
+  .center-chat {
+    flex: 1;
+    padding: 20px 28px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .chat-bubble {
+    max-width: 85%;
+    padding: 14px 18px;
+    border-radius: 18px;
+    font-size: 14px;
+    line-height: 1.6;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: all 0.4s ease;
+    position: relative;
+  }
+
+  .chat-bubble.show { opacity: 1; transform: translateY(0); }
+
+  .chat-bubble.left {
+    align-self: flex-start;
+    background: linear-gradient(135deg, rgba(59,130,246,0.15), rgba(59,130,246,0.08));
+    border: 1px solid rgba(59,130,246,0.2);
+    border-bottom-left-radius: 4px;
+  }
+
+  .chat-bubble.right {
+    align-self: flex-end;
+    background: linear-gradient(135deg, rgba(236,72,153,0.15), rgba(236,72,153,0.08));
+    border: 1px solid rgba(236,72,153,0.2);
+    border-bottom-right-radius: 4px;
+  }
+
+  .chat-bubble.agent-center {
+    align-self: center;
+    background: linear-gradient(135deg, rgba(139,92,246,0.1), rgba(139,92,246,0.05));
+    border: 1px solid rgba(139,92,246,0.2);
+    font-size: 12px;
+    color: #a78bfa;
+    text-align: center;
+    max-width: 90%;
+    padding: 10px 16px;
+    border-radius: 12px;
+  }
+
+  .bubble-name {
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 1.5px; margin-bottom: 4px;
+  }
+
+  .chat-bubble.left .bubble-name { color: #60a5fa; }
+  .chat-bubble.right .bubble-name { color: #f472b6; }
+
+  .bubble-text { color: #e0e0e0; }
+
+  .typing-indicator {
+    display: inline-flex; gap: 4px; padding: 4px 0;
+  }
+
+  .typing-dot {
+    width: 6px; height: 6px; border-radius: 50%; background: #6b7280;
+    animation: typingBounce 1.2s ease-in-out infinite;
+  }
+
+  .typing-dot:nth-child(2) { animation-delay: 0.15s; }
+  .typing-dot:nth-child(3) { animation-delay: 0.3s; }
+
+  @keyframes typingBounce {
+    0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+    30% { transform: translateY(-6px); opacity: 1; }
+  }
+
+  /* Start button */
+  .start-area {
+    padding: 16px 28px;
+    border-top: 1px solid rgba(139,92,246,0.1);
+  }
+
+  .start-btn {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #7c3aed, #6d28d9);
+    border: none; color: white;
+    font-size: 14px; font-weight: 700; letter-spacing: 1.5px;
+    text-transform: uppercase; border-radius: 12px;
+    cursor: pointer; font-family: 'Inter', sans-serif;
+    transition: all 0.3s;
+  }
+
+  .start-btn:hover { box-shadow: 0 0 30px rgba(139,92,246,0.4); transform: translateY(-1px); }
+  .start-btn:disabled { opacity: 0.3; cursor: not-allowed; transform: none; box-shadow: none; }
+  .start-btn.running { animation: btnPulse 1.5s ease-in-out infinite; }
+
+  @keyframes btnPulse {
+    0%,100% { box-shadow: 0 0 15px rgba(139,92,246,0.3); }
+    50% { box-shadow: 0 0 40px rgba(139,92,246,0.6); }
+  }
+
+  /* Compatibility live tracker */
+  .live-compat {
+    padding: 12px 28px;
+    border-top: 1px solid rgba(139,92,246,0.06);
+    display: flex; align-items: center; justify-content: center; gap: 16px;
+  }
+
+  .lc-label { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: #6b7280; font-weight: 600; }
+
+  .lc-score {
+    font-size: 28px; font-weight: 800;
+    background: linear-gradient(135deg, #4ade80, #22c55e);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    transition: all 0.5s;
+  }
+
+  .lc-delta { font-size: 12px; font-weight: 600; }
+  .lc-delta.up { color: #4ade80; }
+  .lc-delta.down { color: #f87171; }
+  .lc-delta.neutral { color: #6b7280; }
+
+  /* Summary card */
+  .summary-card {
+    margin: 0 28px 20px;
+    background: linear-gradient(135deg, rgba(34,197,94,0.08), rgba(139,92,246,0.05));
+    border: 1px solid rgba(34,197,94,0.2);
+    border-radius: 16px;
+    padding: 20px;
+    display: none;
+    animation: slideUp 0.5s ease;
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .sc-title {
+    font-size: 14px; font-weight: 700; color: #4ade80; text-align: center; margin-bottom: 14px;
+    letter-spacing: 1px; text-transform: uppercase;
+  }
+
+  .sc-row {
+    display: flex; justify-content: space-between; padding: 5px 0;
+    font-size: 13px; border-bottom: 1px solid rgba(255,255,255,0.03);
+  }
+
+  .sc-row:last-child { border: none; }
+  .sc-key { color: #6b7280; }
+  .sc-val { color: #e0e0e0; font-weight: 600; }
+  .sc-val.green { color: #4ade80; }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- LEFT: VC #1 -->
+  <div class="panel-left">
+    <div class="profile-header">
+      <div class="ph-label">Person A</div>
+      <div class="ph-name">VC #1</div>
+      <div class="ph-sport">\u{1F3C8} Football</div>
+      <div class="ph-stats">
+        <span class="ph-stat">EQ: 84</span>
+        <span class="ph-stat">Comm: 88</span>
+        <span class="ph-stat">Secure</span>
+      </div>
+    </div>
+    <div class="emotion-gauge" style="margin:16px 20px 0;">
+      <div class="eg-label">Live Emotional Read</div>
+      <div class="eg-bar-row">
+        <span class="eg-bar-label">Openness</span>
+        <div class="eg-bar-bg"><div class="eg-bar" id="l-open" style="width:40%;background:#60a5fa"></div></div>
+        <span class="eg-val" id="l-open-v">40</span>
+      </div>
+      <div class="eg-bar-row">
+        <span class="eg-bar-label">Engagement</span>
+        <div class="eg-bar-bg"><div class="eg-bar" id="l-engage" style="width:35%;background:#a78bfa"></div></div>
+        <span class="eg-val" id="l-engage-v">35</span>
+      </div>
+      <div class="eg-bar-row">
+        <span class="eg-bar-label">Comfort</span>
+        <div class="eg-bar-bg"><div class="eg-bar" id="l-comfort" style="width:50%;background:#4ade80"></div></div>
+        <span class="eg-val" id="l-comfort-v">50</span>
+      </div>
+      <div class="eg-bar-row">
+        <span class="eg-bar-label">Vulnerability</span>
+        <div class="eg-bar-bg"><div class="eg-bar" id="l-vuln" style="width:20%;background:#fbbf24"></div></div>
+        <span class="eg-val" id="l-vuln-v">20</span>
+      </div>
+    </div>
+    <div class="agent-sidebar">
+      <div class="as-label">Agent-\u03B1 (VC #1's Agent)</div>
+      <div id="leftNotes"></div>
+    </div>
+  </div>
+
+  <!-- CENTER: CONVO -->
+  <div class="center">
+    <div class="center-header">
+      <div class="ch-logo">HALO</div>
+      <div class="ch-sub">Agent-Facilitated Conversation</div>
+    </div>
+
+    <div class="center-phase">
+      <div class="cp-step active" id="cp1">Icebreaker</div>
+      <div class="cp-step pending" id="cp2">Depth</div>
+      <div class="cp-step pending" id="cp3">Values</div>
+      <div class="cp-step pending" id="cp4">Verdict</div>
+    </div>
+
+    <div class="center-chat" id="chatArea"></div>
+
+    <div class="live-compat">
+      <span class="lc-label">Live Compatibility</span>
+      <span class="lc-score" id="liveScore">72%</span>
+      <span class="lc-delta neutral" id="liveDelta">\u2014</span>
+    </div>
+
+    <div class="summary-card" id="summaryCard">
+      <div class="sc-title">Conversation Analysis Complete</div>
+      <div id="summaryRows"></div>
+    </div>
+
+    <div class="start-area">
+      <button class="start-btn" id="startBtn" onclick="startConvo()">
+        BEGIN FACILITATED CONVERSATION
+      </button>
+    </div>
+  </div>
+
+  <!-- RIGHT: VC #3 -->
+  <div class="panel-right">
+    <div class="profile-header">
+      <div class="ph-label">Person B</div>
+      <div class="ph-name">VC #3</div>
+      <div class="ph-sport">\u{1F3C8} Football</div>
+      <div class="ph-stats">
+        <span class="ph-stat">EQ: 86</span>
+        <span class="ph-stat">Comm: 91</span>
+        <span class="ph-stat">Secure</span>
+      </div>
+    </div>
+    <div class="emotion-gauge" style="margin:16px 20px 0;">
+      <div class="eg-label">Live Emotional Read</div>
+      <div class="eg-bar-row">
+        <span class="eg-bar-label">Openness</span>
+        <div class="eg-bar-bg"><div class="eg-bar" id="r-open" style="width:45%;background:#f472b6"></div></div>
+        <span class="eg-val" id="r-open-v">45</span>
+      </div>
+      <div class="eg-bar-row">
+        <span class="eg-bar-label">Engagement</span>
+        <div class="eg-bar-bg"><div class="eg-bar" id="r-engage" style="width:40%;background:#a78bfa"></div></div>
+        <span class="eg-val" id="r-engage-v">40</span>
+      </div>
+      <div class="eg-bar-row">
+        <span class="eg-bar-label">Comfort</span>
+        <div class="eg-bar-bg"><div class="eg-bar" id="r-comfort" style="width:55%;background:#4ade80"></div></div>
+        <span class="eg-val" id="r-comfort-v">55</span>
+      </div>
+      <div class="eg-bar-row">
+        <span class="eg-bar-label">Vulnerability</span>
+        <div class="eg-bar-bg"><div class="eg-bar" id="r-vuln" style="width:25%;background:#fbbf24"></div></div>
+        <span class="eg-val" id="r-vuln-v">25</span>
+      </div>
+    </div>
+    <div class="agent-sidebar">
+      <div class="as-label">Agent-\u03B2 (VC #3's Agent)</div>
+      <div id="rightNotes"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ---- CONVERSATION SCRIPT ----
+// Each step: who speaks, what they say, agent notes, emotion updates, compat changes
+const SCRIPT = [
+  // ======= PHASE 1: ICEBREAKER =======
+  {
+    type: "agent",
+    text: "\u{1F916} Agent-\u03B1 and Agent-\u03B2 have negotiated an opening topic based on shared competitive drive.",
+    phase: 1,
+  },
+  {
+    type: "agent",
+    text: "Suggested prompt delivered to both parties: \"What\u2019s a game — any game — where you learned something real about yourself?\"",
+  },
+  {
+    type: "left",
+    name: "VC #1",
+    text: "Honestly? Poker. I used to think I was strategic but I realized I was just aggressive. I had to learn when to fold. That changed how I invest too.",
+    leftNote: { type: "insight", text: "Self-awareness signal detected. Acknowledging a weakness unprompted = high emotional intelligence marker. Bridges personal to professional \u2014 indicates integrated identity." },
+    emotions: { l: { open: 55, engage: 60, comfort: 55, vuln: 35 }, r: { open: 50, engage: 55, comfort: 55, vuln: 25 } },
+    compat: 75,
+  },
+  {
+    type: "right",
+    name: "VC #3",
+    text: "That\u2019s real. For me it was pickup football in college. I was always the QB, always calling the plays. Then one day someone said \u2018you never let anyone else lead.\u2019 That stuck with me.",
+    rightNote: { type: "insight", text: "Reciprocal vulnerability. VC #3 matched the depth of VC #1\u2019s disclosure \u2014 mirroring pattern indicates emotional attunement and willingness to meet at the same level." },
+    leftNote: { type: "success", text: "VC #1\u2019s body language proxy: leaning in. The football reference creates tribal resonance \u2014 shared sport archetype amplifying connection." },
+    emotions: { l: { open: 62, engage: 68, comfort: 60, vuln: 38 }, r: { open: 60, engage: 65, comfort: 62, vuln: 40 } },
+    compat: 79,
+  },
+
+  // ======= PHASE 2: DEPTH =======
+  {
+    type: "agent",
+    text: "\u{1F916} Icebreaker successful. Both agents detected mutual vulnerability. Advancing to depth probe.",
+    phase: 2,
+  },
+  {
+    type: "agent",
+    text: "Agents are now steering toward decision-making under pressure \u2014 the behavioral layer beneath the sport preference.",
+  },
+  {
+    type: "left",
+    name: "VC #1",
+    text: "Can I ask you something direct? When you\u2019re making a call on a company and the data says yes but your gut says no \u2014 what wins?",
+    leftNote: { type: "insight", text: "VC #1 is taking conversational initiative. Direct question = high communication confidence. This also tests VC #3\u2019s comfort with ambiguity \u2014 a core compatibility signal." },
+    emotions: { l: { open: 65, engage: 75, comfort: 58, vuln: 42 }, r: { open: 62, engage: 70, comfort: 58, vuln: 38 } },
+    compat: 81,
+  },
+  {
+    type: "right",
+    name: "VC #3",
+    text: "Gut. Every time. I\u2019ve lost money following the data when my gut said run. But I\u2019ve never regretted trusting my instinct, even when it cost me. What about you?",
+    rightNote: { type: "success", text: "Decisive answer with accountability. Doesn\u2019t hedge. The \u2018even when it cost me\u2019 signals comfort with loss \u2014 emotional resilience marker. Returned the question = mutual investment." },
+    emotions: { l: { open: 70, engage: 80, comfort: 65, vuln: 45 }, r: { open: 68, engage: 78, comfort: 65, vuln: 48 } },
+    compat: 84,
+  },
+  {
+    type: "left",
+    name: "VC #1",
+    text: "Same. I\u2019ve learned the data is the floor, not the ceiling. The best founders I\u2019ve backed were ones where the spreadsheet didn\u2019t fully explain why I believed in them.",
+    leftNote: { type: "success", text: "Philosophical alignment confirmed. Both operate on intuition-over-data frameworks. This is a deep compatibility signal \u2014 shared decision-making architecture." },
+    rightNote: { type: "insight", text: "VC #3\u2019s engagement is peaking. The \u2018floor not ceiling\u2019 metaphor landed \u2014 language pattern matching indicates intellectual resonance." },
+    emotions: { l: { open: 75, engage: 85, comfort: 72, vuln: 48 }, r: { open: 75, engage: 84, comfort: 70, vuln: 50 } },
+    compat: 88,
+  },
+
+  // ======= PHASE 3: VALUES =======
+  {
+    type: "agent",
+    text: "\u{1F916} Deep alignment detected on decision-making framework. Agents now probing core values.",
+    phase: 3,
+  },
+  {
+    type: "agent",
+    text: "Agent-\u03B2 suggests a values probe: what matters beyond winning.",
+  },
+  {
+    type: "right",
+    name: "VC #3",
+    text: "You know what I think about a lot? Legacy. Not in a grandiose way. I mean \u2014 when the founders I back think about me in 10 years, did I actually help them or did I just write a check?",
+    rightNote: { type: "insight", text: "Values disclosure: legacy and impact over transactional success. This is a high-signal moment \u2014 revealing what drives behavior beyond incentives." },
+    emotions: { l: { open: 78, engage: 88, comfort: 75, vuln: 52 }, r: { open: 80, engage: 85, comfort: 72, vuln: 58 } },
+    compat: 90,
+  },
+  {
+    type: "left",
+    name: "VC #1",
+    text: "I feel that deeply. I had a founder text me at 2am once during a crisis. Not their lawyer, not their board. Me. That meant more to me than the return on the deal.",
+    leftNote: { type: "success", text: "Emotional vulnerability at peak. Sharing a personal story that reveals values in action, not just in theory. This is the deepest disclosure in the conversation so far." },
+    rightNote: { type: "success", text: "VC #3 is mirroring body language. The 2am story triggered recognition \u2014 Agent-\u03B2 detects this matches VC #3\u2019s own unprompted mentorship pattern." },
+    emotions: { l: { open: 85, engage: 92, comfort: 82, vuln: 62 }, r: { open: 85, engage: 90, comfort: 80, vuln: 60 } },
+    compat: 93,
+  },
+  {
+    type: "right",
+    name: "VC #3",
+    text: "Yeah. That\u2019s it. That\u2019s the whole thing. We\u2019re in the people business disguised as a money business.",
+    rightNote: { type: "success", text: "Synthesis statement. VC #3 is consolidating shared meaning \u2014 this is how bonds crystallize. Both parties now share a narrative frame." },
+    emotions: { l: { open: 88, engage: 94, comfort: 85, vuln: 65 }, r: { open: 88, engage: 92, comfort: 84, vuln: 63 } },
+    compat: 95,
+  },
+
+  // ======= PHASE 4: VERDICT =======
+  {
+    type: "agent",
+    text: "\u{1F916} Deep values alignment confirmed. Both agents issuing final assessment.",
+    phase: 4,
+  },
+  {
+    type: "agent",
+    text: "\u2705 Agent-\u03B1 verdict: Strong match. Shared decision-making architecture, high emotional reciprocity, aligned on purpose over profit.",
+  },
+  {
+    type: "agent",
+    text: "\u2705 Agent-\u03B2 verdict: Strong match. Conversational mirroring, matched vulnerability escalation, shared legacy orientation.",
+  },
+  {
+    type: "agent",
+    text: "\u{1F91D} HALO Recommendation: Continue relationship. Suggested next step: collaborative deal review over dinner.",
+  },
+];
+
+let currentStep = 0;
+let running = false;
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+function addBubble(type, name, text) {
+  const chat = document.getElementById('chatArea');
+
+  if (type === 'agent') {
+    const bubble = document.createElement('div');
+    bubble.className = 'chat-bubble agent-center';
+    bubble.innerHTML = text;
+    chat.appendChild(bubble);
+    setTimeout(() => bubble.classList.add('show'), 50);
+    chat.scrollTop = chat.scrollHeight;
+    return;
+  }
+
+  const side = type === 'left' ? 'left' : 'right';
+
+  // Show typing first
+  const typing = document.createElement('div');
+  typing.className = `chat-bubble ${side} show`;
+  typing.innerHTML = `
+    <div class="bubble-name">${name}</div>
+    <div class="typing-indicator">
+      <div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>
+    </div>
+  `;
+  chat.appendChild(typing);
+  chat.scrollTop = chat.scrollHeight;
+
+  return new Promise(resolve => {
+    setTimeout(() => {
+      typing.innerHTML = `
+        <div class="bubble-name">${name}</div>
+        <div class="bubble-text">${text}</div>
+      `;
+      chat.scrollTop = chat.scrollHeight;
+      resolve();
+    }, 1200 + Math.random() * 800);
+  });
+}
+
+function addNote(side, note) {
+  const container = document.getElementById(side === 'left' ? 'leftNotes' : 'rightNotes');
+  const div = document.createElement('div');
+  div.className = 'agent-note';
+  div.innerHTML = `
+    <div class="note-type ${note.type}">${note.type}</div>
+    ${note.text}
+  `;
+  container.prepend(div);
+  setTimeout(() => div.classList.add('show'), 50);
+}
+
+function updateEmotions(emotions) {
+  if (emotions.l) {
+    animateBar('l-open', emotions.l.open);
+    animateBar('l-engage', emotions.l.engage);
+    animateBar('l-comfort', emotions.l.comfort);
+    animateBar('l-vuln', emotions.l.vuln);
+  }
+  if (emotions.r) {
+    animateBar('r-open', emotions.r.open);
+    animateBar('r-engage', emotions.r.engage);
+    animateBar('r-comfort', emotions.r.comfort);
+    animateBar('r-vuln', emotions.r.vuln);
+  }
+}
+
+function animateBar(id, val) {
+  const bar = document.getElementById(id);
+  const valEl = document.getElementById(id + '-v');
+  if (bar) bar.style.width = val + '%';
+  if (valEl) valEl.textContent = val;
+}
+
+function updateCompat(newScore) {
+  const scoreEl = document.getElementById('liveScore');
+  const deltaEl = document.getElementById('liveDelta');
+  const old = parseInt(scoreEl.textContent);
+  const diff = newScore - old;
+
+  scoreEl.textContent = newScore + '%';
+
+  if (diff > 0) {
+    deltaEl.textContent = '\u25B2 +' + diff;
+    deltaEl.className = 'lc-delta up';
+  } else if (diff < 0) {
+    deltaEl.textContent = '\u25BC ' + diff;
+    deltaEl.className = 'lc-delta down';
+  } else {
+    deltaEl.textContent = '\u2014';
+    deltaEl.className = 'lc-delta neutral';
+  }
+}
+
+function setPhase(num) {
+  for (let i = 1; i <= 4; i++) {
+    const el = document.getElementById('cp' + i);
+    if (i < num) el.className = 'cp-step complete';
+    else if (i === num) el.className = 'cp-step active';
+    else el.className = 'cp-step pending';
+  }
+}
+
+async function startConvo() {
+  if (running) return;
+  running = true;
+  const btn = document.getElementById('startBtn');
+  btn.disabled = true;
+  btn.classList.add('running');
+  btn.textContent = 'CONVERSATION IN PROGRESS...';
+
+  for (const step of SCRIPT) {
+    if (step.phase) {
+      setPhase(step.phase);
+    }
+
+    if (step.type === 'agent') {
+      await sleep(600);
+      addBubble('agent', null, step.text);
+      await sleep(800);
+    }
+    else if (step.type === 'left' || step.type === 'right') {
+      await sleep(500);
+      await addBubble(step.type, step.name, step.text);
+
+      if (step.leftNote) {
+        await sleep(300);
+        addNote('left', step.leftNote);
+      }
+      if (step.rightNote) {
+        await sleep(300);
+        addNote('right', step.rightNote);
+      }
+      if (step.emotions) {
+        updateEmotions(step.emotions);
+      }
+      if (step.compat) {
+        await sleep(200);
+        updateCompat(step.compat);
+      }
+
+      await sleep(800);
+    }
+  }
+
+  // Show summary
+  btn.classList.remove('running');
+  btn.textContent = 'CONVERSATION COMPLETE';
+
+  const summary = document.getElementById('summaryCard');
+  const rows = document.getElementById('summaryRows');
+  const data = [
+    ["Final Compatibility", "95%", true],
+    ["Vulnerability Match", "Symmetric — both escalated equally", false],
+    ["Communication Style", "Direct ↔ Direct (aligned)", false],
+    ["Values Alignment", "Legacy > Returns (shared)", false],
+    ["Decision Framework", "Intuition-led (shared)", false],
+    ["Emotional Reciprocity", "High — consistent mirroring", false],
+    ["Agent Recommendation", "Strong match — continue", true],
+    ["Suggested Next", "Collaborative deal review dinner", false],
+  ];
+
+  rows.innerHTML = data.map(([k, v, green]) =>
+    `<div class="sc-row"><span class="sc-key">${k}</span><span class="sc-val${green ? ' green' : ''}">${v}</span></div>`
+  ).join('');
+
+  summary.style.display = 'block';
+  document.getElementById('chatArea').scrollTop = 99999;
+}
+</script>
+</body>
+</html>

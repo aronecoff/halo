@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" viewBox="0 0 192 192">
+  <rect width="192" height="192" rx="42" fill="#07070D"/>
+  <defs>
+    <radialGradient id="orb" cx="50%" cy="38%" r="18%">
+      <stop offset="0%" stop-color="#A78BFA"/>
+      <stop offset="40%" stop-color="#7C3AED"/>
+      <stop offset="100%" stop-color="#4C1D95"/>
+    </radialGradient>
+    <radialGradient id="glow" cx="50%" cy="38%" r="36%">
+      <stop offset="0%" stop-color="#A78BFA" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#A78BFA" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="text" x1="30%" y1="50%" x2="70%" y2="50%">
+      <stop offset="0%" stop-color="#A78BFA"/>
+      <stop offset="50%" stop-color="#7C3AED"/>
+      <stop offset="100%" stop-color="#6D28D9"/>
+    </linearGradient>
+  </defs>
+  <circle cx="96" cy="73" r="70" fill="url(#glow)"/>
+  <circle cx="96" cy="73" r="35" fill="url(#orb)"/>
+  <text x="96" y="145" text-anchor="middle" font-family="-apple-system, system-ui, sans-serif" font-weight="900" font-size="28" letter-spacing="5" fill="url(#text)">HALO</text>
+</svg>

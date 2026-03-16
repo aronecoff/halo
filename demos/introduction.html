@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HALO — The Introduction</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: #0a0a0f;
+    color: #e0e0e0;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .app {
+    display: grid;
+    grid-template-columns: 420px 1fr;
+    height: 100vh;
+  }
+
+  /* LEFT PANEL */
+  .panel {
+    background: linear-gradient(180deg, #0f0f1a 0%, #0a0a12 100%);
+    border-right: 1px solid rgba(139, 92, 246, 0.15);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+  }
+
+  .panel::-webkit-scrollbar { width: 4px; }
+  .panel::-webkit-scrollbar-track { background: transparent; }
+  .panel::-webkit-scrollbar-thumb { background: rgba(139,92,246,0.3); border-radius: 4px; }
+
+  .logo-area {
+    padding: 24px 28px 18px;
+    border-bottom: 1px solid rgba(139, 92, 246, 0.1);
+  }
+
+  .logo {
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: 6px;
+    background: linear-gradient(135deg, #a78bfa, #7c3aed, #6d28d9);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .logo-sub {
+    font-size: 11px;
+    color: #6b7280;
+    letter-spacing: 2px;
+    margin-top: 3px;
+    text-transform: uppercase;
+  }
+
+  /* PHASE INDICATOR */
+  .phase-bar {
+    display: flex;
+    padding: 16px 28px;
+    gap: 4px;
+    border-bottom: 1px solid rgba(139, 92, 246, 0.1);
+  }
+
+  .phase-step {
+    flex: 1;
+    text-align: center;
+    padding: 8px 4px;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-weight: 600;
+    border-radius: 6px;
+    transition: all 0.5s;
+    position: relative;
+  }
+
+  .phase-step.pending { color: #4b5563; background: rgba(255,255,255,0.02); }
+  .phase-step.active { color: #a78bfa; background: rgba(139, 92, 246, 0.15); box-shadow: 0 0 12px rgba(139,92,246,0.15); }
+  .phase-step.complete { color: #4ade80; background: rgba(34,197,94,0.1); }
+
+  .phase-step .phase-num {
+    display: block;
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 2px;
+  }
+
+  /* PROFILES */
+  .profiles-section {
+    padding: 20px 28px;
+    border-bottom: 1px solid rgba(139, 92, 246, 0.1);
+  }
+
+  .section-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #8b5cf6;
+    margin-bottom: 14px;
+    font-weight: 600;
+  }
+
+  .profile-row {
+    display: flex;
+    gap: 14px;
+  }
+
+  .profile-card {
+    flex: 1;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(139, 92, 246, 0.15);
+    border-radius: 14px;
+    padding: 16px;
+    position: relative;
+    transition: all 0.3s;
+  }
+
+  .profile-card.you { border-color: rgba(59, 130, 246, 0.3); }
+  .profile-card.match { border-color: rgba(236, 72, 153, 0.3); }
+
+  .profile-card .label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  .profile-card.you .label { color: #60a5fa; }
+  .profile-card.match .label { color: #f472b6; }
+
+  .profile-name { font-weight: 700; font-size: 16px; color: #f3f4f6; }
+  .profile-age { color: #9ca3af; font-weight: 400; }
+  .profile-bio { font-size: 12px; color: #9ca3af; margin-top: 6px; line-height: 1.5; }
+
+  .profile-stats {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  .stat-chip {
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 8px;
+    font-weight: 600;
+  }
+
+  .profile-card.you .stat-chip { background: rgba(59,130,246,0.12); color: #93c5fd; }
+  .profile-card.match .stat-chip { background: rgba(236,72,153,0.12); color: #f9a8d4; }
+
+  .profile-location {
+    font-size: 11px;
+    color: #6b7280;
+    margin-top: 8px;
+    font-family: 'SF Mono', monospace;
+  }
+
+  /* AGENT LOG */
+  .agent-section {
+    padding: 16px 28px;
+    border-bottom: 1px solid rgba(139, 92, 246, 0.1);
+    max-height: 999px;
+    overflow-y: auto;
+  }
+
+  .log-line {
+    font-size: 11px;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    color: #6b7280;
+    padding: 3px 0;
+    opacity: 0;
+    animation: fadeIn 0.3s ease forwards;
+    line-height: 1.6;
+  }
+
+  .log-line .ts { color: #4b5563; }
+  .log-line .agent-a { color: #60a5fa; }
+  .log-line .agent-b { color: #f472b6; }
+  .log-line .system { color: #8b5cf6; }
+  .log-line .success { color: #4ade80; }
+  .log-line .negotiation { color: #fbbf24; }
+
+  @keyframes fadeIn { to { opacity: 1; } }
+
+  /* INTRODUCTION CARD */
+  .intro-card {
+    margin: 20px 28px;
+    background: linear-gradient(135deg, rgba(139,92,246,0.08), rgba(59,130,246,0.05));
+    border: 1px solid rgba(139, 92, 246, 0.25);
+    border-radius: 18px;
+    padding: 24px;
+    display: none;
+    animation: slideUp 0.5s ease;
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .intro-card .intro-header {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  .intro-card .intro-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #f3f4f6;
+    margin-bottom: 4px;
+  }
+
+  .intro-card .intro-subtitle {
+    font-size: 12px;
+    color: #8b5cf6;
+    letter-spacing: 1px;
+  }
+
+  .intro-block {
+    margin-bottom: 18px;
+  }
+
+  .intro-block-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #6b7280;
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+
+  .meeting-spot {
+    background: rgba(34,197,94,0.08);
+    border: 1px solid rgba(34,197,94,0.2);
+    border-radius: 12px;
+    padding: 14px;
+  }
+
+  .meeting-spot .spot-name {
+    font-weight: 700;
+    font-size: 15px;
+    color: #4ade80;
+  }
+
+  .meeting-spot .spot-reason {
+    font-size: 12px;
+    color: #9ca3af;
+    margin-top: 4px;
+    line-height: 1.5;
+  }
+
+  .meeting-spot .spot-coords {
+    font-size: 11px;
+    color: #6b7280;
+    margin-top: 6px;
+    font-family: monospace;
+  }
+
+  .meeting-spot .spot-distance {
+    font-size: 11px;
+    color: #fbbf24;
+    margin-top: 4px;
+  }
+
+  .convo-prompts {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .convo-prompt {
+    background: rgba(139,92,246,0.08);
+    border: 1px solid rgba(139,92,246,0.15);
+    border-radius: 10px;
+    padding: 12px;
+    font-size: 13px;
+    color: #c4b5fd;
+    line-height: 1.5;
+    position: relative;
+    padding-left: 32px;
+  }
+
+  .convo-prompt::before {
+    content: attr(data-num);
+    position: absolute;
+    left: 12px;
+    top: 12px;
+    font-size: 11px;
+    font-weight: 700;
+    color: #8b5cf6;
+  }
+
+  .shared-values {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .shared-value {
+    padding: 5px 12px;
+    background: rgba(139,92,246,0.12);
+    border: 1px solid rgba(139,92,246,0.2);
+    border-radius: 16px;
+    font-size: 12px;
+    color: #c4b5fd;
+    font-weight: 500;
+  }
+
+  .time-window {
+    background: rgba(251,191,36,0.08);
+    border: 1px solid rgba(251,191,36,0.2);
+    border-radius: 12px;
+    padding: 14px;
+  }
+
+  .time-window .time-text {
+    font-size: 14px;
+    color: #fbbf24;
+    font-weight: 600;
+  }
+
+  .time-window .time-reason {
+    font-size: 12px;
+    color: #9ca3af;
+    margin-top: 4px;
+    line-height: 1.5;
+  }
+
+  /* OPT-IN BUTTONS */
+  .optin-section {
+    padding: 16px 28px;
+    display: none;
+  }
+
+  .optin-row {
+    display: flex;
+    gap: 10px;
+  }
+
+  .optin-btn {
+    flex: 1;
+    padding: 14px;
+    border-radius: 12px;
+    border: none;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .optin-btn.accept-you {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: white;
+  }
+
+  .optin-btn.accept-match {
+    background: linear-gradient(135deg, #ec4899, #db2777);
+    color: white;
+  }
+
+  .optin-btn:hover { transform: translateY(-1px); box-shadow: 0 0 20px rgba(139,92,246,0.3); }
+
+  .optin-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+
+  .optin-btn.confirmed {
+    opacity: 1;
+    background: rgba(34,197,94,0.2);
+    color: #4ade80;
+    border: 1px solid rgba(34,197,94,0.3);
+  }
+
+  /* RUN BUTTON */
+  .run-btn {
+    margin: 16px 28px;
+    padding: 14px;
+    background: linear-gradient(135deg, #7c3aed, #6d28d9);
+    border: none;
+    color: white;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .run-btn:hover { box-shadow: 0 0 30px rgba(139,92,246,0.4); transform: translateY(-1px); }
+  .run-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
+  .run-btn.scanning { animation: pulse-glow 1.5s ease-in-out infinite; }
+
+  @keyframes pulse-glow {
+    0%, 100% { box-shadow: 0 0 15px rgba(139,92,246,0.3); }
+    50% { box-shadow: 0 0 40px rgba(139,92,246,0.6); }
+  }
+
+  /* MAP */
+  #map { width: 100%; height: 100%; background: #0f0f1a; }
+  .leaflet-tile-pane { filter: saturate(0.3) brightness(0.6) contrast(1.2); }
+
+  .leaflet-popup-content-wrapper {
+    background: rgba(15,15,26,0.95) !important;
+    border: 1px solid rgba(139,92,246,0.3) !important;
+    border-radius: 12px !important;
+    color: #e0e0e0 !important;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5) !important;
+  }
+  .leaflet-popup-tip { background: rgba(15,15,26,0.95) !important; }
+  .leaflet-popup-content { margin: 14px !important; font-family: 'Inter', sans-serif !important; font-size: 13px !important; }
+
+  /* MAP OVERLAYS */
+  .map-overlay {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 999;
+    background: rgba(10,10,15,0.88);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(139,92,246,0.2);
+    border-radius: 14px;
+    padding: 18px;
+    min-width: 240px;
+    display: none;
+  }
+
+  .map-overlay h4 {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #8b5cf6;
+    margin-bottom: 12px;
+  }
+
+  .ov-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 0;
+    font-size: 13px;
+  }
+
+  .ov-label { color: #6b7280; }
+  .ov-val { color: #e0e0e0; font-weight: 600; }
+  .ov-val.green { color: #4ade80; }
+
+  /* MIDPOINT PULSE */
+  @keyframes midpointPulse {
+    0% { box-shadow: 0 0 0 0 rgba(34,197,94,0.5); }
+    70% { box-shadow: 0 0 0 20px rgba(34,197,94,0); }
+    100% { box-shadow: 0 0 0 0 rgba(34,197,94,0); }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="panel">
+    <div class="logo-area">
+      <div class="logo">HALO</div>
+      <div class="logo-sub">Step 4 — The Introduction</div>
+    </div>
+
+    <!-- PHASE BAR -->
+    <div class="phase-bar">
+      <div class="phase-step complete" id="phase1"><span class="phase-num">1</span>Discovery</div>
+      <div class="phase-step pending" id="phase2"><span class="phase-num">2</span>Handshake</div>
+      <div class="phase-step pending" id="phase3"><span class="phase-num">3</span>Opt-In</div>
+      <div class="phase-step pending" id="phase4"><span class="phase-num">4</span>Introduction</div>
+    </div>
+
+    <!-- PROFILES -->
+    <div class="profiles-section">
+      <div class="section-label">Matched Profiles</div>
+      <div class="profile-row">
+        <div class="profile-card you">
+          <div class="label">You</div>
+          <div class="profile-name">Aron <span class="profile-age">• VC Demo</span></div>
+          <div class="profile-bio">Queried: emotionally secure, adventurous</div>
+          <div class="profile-stats">
+            <span class="stat-chip">EQ: 88</span>
+            <span class="stat-chip">Comm: 90</span>
+          </div>
+          <div class="profile-location">37.7955°N, 122.4210°W</div>
+        </div>
+        <div class="profile-card match">
+          <div class="label">Match</div>
+          <div class="profile-name">Sam Okafor <span class="profile-age">• 29</span></div>
+          <div class="profile-bio">Community organizer. Legendary potlucks. Love should feel easy.</div>
+          <div class="profile-stats">
+            <span class="stat-chip">EQ: 90</span>
+            <span class="stat-chip">Comm: 93</span>
+          </div>
+          <div class="profile-location">37.7625°N, 122.4310°W</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- START BUTTON -->
+    <button class="run-btn" id="runBtn" onclick="startHandshake()">
+      BEGIN AGENT HANDSHAKE
+    </button>
+
+    <!-- AGENT LOG -->
+    <div class="agent-section" id="agentSection" style="display:none;">
+      <div class="section-label">Agent Negotiation</div>
+      <div id="logLines"></div>
+    </div>
+
+    <!-- OPT-IN -->
+    <div class="optin-section" id="optinSection">
+      <div class="section-label">Double Opt-In Required</div>
+      <div class="optin-row">
+        <button class="optin-btn accept-you" id="optYou" onclick="optIn('you')">Aron Accepts</button>
+        <button class="optin-btn accept-match" id="optMatch" onclick="optIn('match')">Sam Accepts</button>
+      </div>
+    </div>
+
+    <!-- INTRODUCTION -->
+    <div class="intro-card" id="introCard">
+      <div class="intro-header">
+        <div class="intro-title">Introduction Generated</div>
+        <div class="intro-subtitle">BOTH AGENTS CONFIRMED — INITIATING MEETUP</div>
+      </div>
+
+      <div class="intro-block">
+        <div class="intro-block-label">Suggested Meeting Spot</div>
+        <div class="meeting-spot" id="meetingSpot"></div>
+      </div>
+
+      <div class="intro-block">
+        <div class="intro-block-label">Agents Aligned On</div>
+        <div class="shared-values" id="sharedValues"></div>
+      </div>
+
+      <div class="intro-block">
+        <div class="intro-block-label">Conversation Starters (Agent-Generated)</div>
+        <div class="convo-prompts" id="convoPrompts"></div>
+      </div>
+
+      <div class="intro-block">
+        <div class="intro-block-label">Optimal Time Window</div>
+        <div class="time-window" id="timeWindow"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAP -->
+  <div style="position:relative; height:100%;">
+    <div id="map"></div>
+    <div class="map-overlay" id="mapOverlay">
+      <h4>Introduction Status</h4>
+      <div class="ov-row"><span class="ov-label">Phase</span><span class="ov-val" id="ovPhase">Discovery ✓</span></div>
+      <div class="ov-row"><span class="ov-label">Compatibility</span><span class="ov-val green" id="ovCompat">93%</span></div>
+      <div class="ov-row"><span class="ov-label">Distance</span><span class="ov-val" id="ovDist">—</span></div>
+      <div class="ov-row"><span class="ov-label">Meeting Spot</span><span class="ov-val green" id="ovSpot">—</span></div>
+      <div class="ov-row"><span class="ov-label">Status</span><span class="ov-val" id="ovStatus">Awaiting handshake</span></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ---- Config ----
+const ARON = { name: "Aron", lat: 37.7955, lng: -122.4210, color: '#3b82f6' };
+const SAM  = { name: "Sam",  lat: 37.7625, lng: -122.4310, color: '#ec4899' };
+
+// Meeting spots between the two locations
+const MEETING_SPOTS = [
+  { name: "Ritual Coffee — Hayes Valley", lat: 37.7763, lng: -122.4223,
+    reason: "Midpoint between both locations. Casual, low-pressure atmosphere with great natural light. Ideal for a first in-person interaction — easy to extend or exit gracefully.",
+    type: "cafe" },
+  { name: "Patricia's Green", lat: 37.7760, lng: -122.4245,
+    reason: "Open-air park setting. Sam's community-oriented personality pairs well with a relaxed outdoor space. Removes the formality barrier that can stall first meetings.",
+    type: "park" },
+  { name: "Souvla — Hayes Valley", lat: 37.7758, lng: -122.4218,
+    reason: "Counter-service removes the 'who pays' awkwardness. Shared plates align with Sam's love of communal dining. Average visit 45min — perfect first interaction window.",
+    type: "restaurant" },
+];
+
+const SHARED_TRAITS = [
+  "Emotional Security", "Adventurous Spirit", "Values Community",
+  "High Communication (90+ / 93)", "Secure Attachment Style", "Warmth"
+];
+
+const CONVO_STARTERS = [
+  "Sam's agent flagged that they organize community potlucks — and your profile shows you value shared experiences. Ask about the most memorable one they've hosted.",
+  "Both profiles score high on 'adventurous' — but adventure means different things to different people. Your agent suggests comparing: 'What's the last thing you did that genuinely scared you?'",
+  "Your communication styles are closely matched (90 vs 93). Sam's agent indicated they value directness — skip small talk and open with something real about what you're looking for.",
+];
+
+const TIME_SUGGESTION = {
+  text: "Saturday, 2:30 PM",
+  reason: "Both agents identified weekend afternoons as peak availability. The 2:30 slot is optimal — late enough to feel casual (not a 'date-date'), early enough that it can naturally extend into an evening walk if the connection is strong."
+};
+
+let map, markerAron, markerSam, markerMeet;
+let meetLine, meetLineAnimated;
+let optYouDone = false, optMatchDone = false;
+
+// ---- Init Map ----
+function initMap() {
+  map = L.map('map', { center: [37.7790, -122.4260], zoom: 14, zoomControl: false });
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    attribution: '© OpenStreetMap & CartoDB', maxZoom: 19
+  }).addTo(map);
+  L.control.zoom({ position: 'bottomright' }).addTo(map);
+
+  // Add person markers
+  markerAron = L.circleMarker([ARON.lat, ARON.lng], {
+    radius: 10, fillColor: ARON.color, color: 'white', weight: 2, fillOpacity: 0.9
+  }).addTo(map).bindPopup(`<strong style="color:${ARON.color}">Aron</strong><br><span style="color:#9ca3af;font-size:12px">37.7955°N, 122.4210°W</span>`);
+
+  markerSam = L.circleMarker([SAM.lat, SAM.lng], {
+    radius: 10, fillColor: SAM.color, color: 'white', weight: 2, fillOpacity: 0.9
+  }).addTo(map).bindPopup(`<strong style="color:${SAM.color}">Sam Okafor</strong><br><span style="color:#9ca3af;font-size:12px">37.7625°N, 122.4310°W</span>`);
+}
+
+// ---- Logging ----
+function addLog(text, cls = 'system') {
+  const logDiv = document.getElementById('logLines');
+  const line = document.createElement('div');
+  line.className = 'log-line';
+  const t = new Date().toLocaleTimeString('en-US', { hour12: false, hour:'2-digit', minute:'2-digit', second:'2-digit' });
+  line.innerHTML = `<span class="ts">[${t}]</span> <span class="${cls}">${text}</span>`;
+  logDiv.appendChild(line);
+  logDiv.scrollTop = logDiv.scrollHeight;
+}
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+function setPhase(num, state) {
+  const el = document.getElementById('phase' + num);
+  el.className = 'phase-step ' + state;
+}
+
+// ---- Handshake Flow ----
+async function startHandshake() {
+  const btn = document.getElementById('runBtn');
+  btn.disabled = true;
+  btn.classList.add('scanning');
+  btn.textContent = 'NEGOTIATING...';
+
+  const logSection = document.getElementById('agentSection');
+  logSection.style.display = 'block';
+  document.getElementById('mapOverlay').style.display = 'block';
+
+  // PHASE 2: Agent Handshake
+  setPhase(2, 'active');
+  document.getElementById('ovPhase').textContent = 'Handshake';
+  document.getElementById('ovStatus').textContent = 'Agents negotiating...';
+
+  const handshakeLogs = [
+    { text: "Agent-α (Aron) initiating handshake protocol with Agent-β (Sam)...", cls: "agent-a", delay: 600 },
+    { text: "Agent-β acknowledges. Opening secure negotiation channel.", cls: "agent-b", delay: 500 },
+    { text: "Agent-α transmitting compatibility vector: [emotional_security: 0.94, adventure: 0.91, warmth: 0.87]", cls: "agent-a", delay: 700 },
+    { text: "Agent-β transmitting compatibility vector: [emotional_security: 0.96, community: 0.95, spontaneity: 0.89]", cls: "agent-b", delay: 700 },
+    { text: "Cross-referencing attachment styles... Aron: secure ←→ Sam: secure", cls: "system", delay: 500 },
+    { text: "MATCH: Secure-Secure pairing — highest stability predictor (+0.10 bonus)", cls: "success", delay: 600 },
+    { text: "Agent-α probing dealbreaker registry... 0 conflicts detected.", cls: "agent-a", delay: 500 },
+    { text: "Agent-β probing dealbreaker registry... 0 conflicts detected.", cls: "agent-b", delay: 500 },
+    { text: "Communication style analysis: Direct ←→ Direct — strong alignment", cls: "system", delay: 400 },
+    { text: "Agent-α: EQ correlation = 0.93 (above 0.80 threshold)", cls: "agent-a", delay: 500 },
+    { text: "Agent-β: Emotional reciprocity score = 0.91", cls: "agent-b", delay: 400 },
+    { text: "Negotiation complete. Both agents recommend proceeding.", cls: "success", delay: 600 },
+    { text: "HANDSHAKE VERIFIED ✓ — requesting human opt-in from both parties.", cls: "success", delay: 500 },
+  ];
+
+  // Draw connection line on map
+  await sleep(800);
+  meetLine = L.polyline([[ARON.lat, ARON.lng], [SAM.lat, SAM.lng]], {
+    color: '#8b5cf6', weight: 2, opacity: 0.3, dashArray: '8 8'
+  }).addTo(map);
+
+  for (const log of handshakeLogs) {
+    await sleep(log.delay);
+    addLog(log.text, log.cls);
+  }
+
+  // Calculate distance
+  const dist = haversine(ARON.lat, ARON.lng, SAM.lat, SAM.lng);
+  document.getElementById('ovDist').textContent = dist.toFixed(1) + ' km';
+
+  setPhase(2, 'complete');
+
+  // PHASE 3: Opt-In
+  setPhase(3, 'active');
+  document.getElementById('ovPhase').textContent = 'Opt-In';
+  document.getElementById('ovStatus').textContent = 'Awaiting both humans...';
+
+  btn.classList.remove('scanning');
+  btn.textContent = 'HANDSHAKE COMPLETE';
+
+  // Show opt-in buttons
+  document.getElementById('optinSection').style.display = 'block';
+}
+
+function optIn(who) {
+  if (who === 'you') {
+    optYouDone = true;
+    const btn = document.getElementById('optYou');
+    btn.classList.add('confirmed');
+    btn.textContent = '✓ ARON CONFIRMED';
+    btn.disabled = true;
+    addLog("Aron opted in. Waiting for Sam...", 'agent-a');
+  } else {
+    optMatchDone = true;
+    const btn = document.getElementById('optMatch');
+    btn.classList.add('confirmed');
+    btn.textContent = '✓ SAM CONFIRMED';
+    btn.disabled = true;
+    addLog("Sam opted in. Waiting for Aron...", 'agent-b');
+  }
+
+  if (optYouDone && optMatchDone) {
+    setPhase(3, 'complete');
+    addLog("DOUBLE OPT-IN COMPLETE ✓ — both humans confirmed.", 'success');
+    beginIntroduction();
+  }
+}
+
+async function beginIntroduction() {
+  setPhase(4, 'active');
+  document.getElementById('ovPhase').textContent = 'Introduction';
+  document.getElementById('ovStatus').textContent = 'Generating...';
+  document.getElementById('optinSection').style.display = 'none';
+
+  const introLogs = [
+    { text: "Both parties confirmed. Initiating introduction protocol...", cls: "system", delay: 600 },
+    { text: "Computing geographic midpoint: (37.7790, -122.4260)", cls: "system", delay: 500 },
+    { text: "Querying venue database within 500m of midpoint...", cls: "system", delay: 600 },
+    { text: "Agent-α evaluating venue: Ritual Coffee — communication-friendly ✓", cls: "agent-a", delay: 500 },
+    { text: "Agent-β evaluating venue: Ritual Coffee — community vibe ✓", cls: "agent-b", delay: 400 },
+    { text: "Venue selected: Ritual Coffee, Hayes Valley", cls: "success", delay: 500 },
+    { text: "Generating conversation prompts from shared trait analysis...", cls: "system", delay: 600 },
+    { text: "Agent-α contributed 2 prompts based on Aron's interaction style.", cls: "agent-a", delay: 400 },
+    { text: "Agent-β contributed 1 prompt based on Sam's openness profile.", cls: "agent-b", delay: 400 },
+    { text: "Cross-referencing calendar availability...", cls: "system", delay: 500 },
+    { text: "Optimal window identified: Saturday 2:30 PM", cls: "success", delay: 400 },
+    { text: "INTRODUCTION PACKAGE READY ✓", cls: "success", delay: 600 },
+  ];
+
+  for (const log of introLogs) {
+    await sleep(log.delay);
+    addLog(log.text, log.cls);
+  }
+
+  // Place meeting spot on map
+  const spot = MEETING_SPOTS[0];
+
+  // Animate line to meeting point
+  if (meetLine) map.removeLayer(meetLine);
+
+  L.polyline([[ARON.lat, ARON.lng], [spot.lat, spot.lng]], {
+    color: '#3b82f6', weight: 2, opacity: 0.5, dashArray: '6 6'
+  }).addTo(map);
+
+  L.polyline([[SAM.lat, SAM.lng], [spot.lat, spot.lng]], {
+    color: '#ec4899', weight: 2, opacity: 0.5, dashArray: '6 6'
+  }).addTo(map);
+
+  markerMeet = L.circleMarker([spot.lat, spot.lng], {
+    radius: 14, fillColor: '#22c55e', color: 'white', weight: 3, fillOpacity: 0.9
+  }).addTo(map);
+
+  // Pulse ring
+  const pulseRing = L.circleMarker([spot.lat, spot.lng], {
+    radius: 25, fillColor: '#22c55e', color: '#22c55e', weight: 1, fillOpacity: 0.15, opacity: 0.3
+  }).addTo(map);
+
+  markerMeet.bindPopup(`
+    <div>
+      <strong style="color:#4ade80;font-size:15px">${spot.name}</strong>
+      <div style="color:#9ca3af;font-size:12px;margin-top:6px;line-height:1.5">${spot.reason}</div>
+      <div style="color:#6b7280;font-size:11px;margin-top:6px;font-family:monospace">${spot.lat.toFixed(4)}°N, ${Math.abs(spot.lng).toFixed(4)}°W</div>
+      <div style="color:#fbbf24;font-size:12px;margin-top:6px;font-weight:600">Saturday, 2:30 PM</div>
+    </div>
+  `).openPopup();
+
+  map.flyTo([spot.lat, spot.lng], 15, { duration: 1.2 });
+
+  // Update overlay
+  document.getElementById('ovSpot').textContent = 'Ritual Coffee';
+  document.getElementById('ovStatus').textContent = 'Complete ✓';
+
+  // Build intro card
+  const spotDiv = document.getElementById('meetingSpot');
+  const distA = haversine(ARON.lat, ARON.lng, spot.lat, spot.lng);
+  const distS = haversine(SAM.lat, SAM.lng, spot.lat, spot.lng);
+  spotDiv.innerHTML = `
+    <div class="spot-name">${spot.name}</div>
+    <div class="spot-reason">${spot.reason}</div>
+    <div class="spot-coords">${spot.lat.toFixed(4)}°N, ${Math.abs(spot.lng).toFixed(4)}°W</div>
+    <div class="spot-distance">Aron: ${distA.toFixed(1)} km away &nbsp;|&nbsp; Sam: ${distS.toFixed(1)} km away</div>
+  `;
+
+  const valuesDiv = document.getElementById('sharedValues');
+  valuesDiv.innerHTML = SHARED_TRAITS.map(t => `<span class="shared-value">${t}</span>`).join('');
+
+  const promptsDiv = document.getElementById('convoPrompts');
+  promptsDiv.innerHTML = CONVO_STARTERS.map((p, i) =>
+    `<div class="convo-prompt" data-num="${i + 1}.">${p}</div>`
+  ).join('');
+
+  const timeDiv = document.getElementById('timeWindow');
+  timeDiv.innerHTML = `
+    <div class="time-text">${TIME_SUGGESTION.text}</div>
+    <div class="time-reason">${TIME_SUGGESTION.reason}</div>
+  `;
+
+  // Show the card
+  await sleep(400);
+  document.getElementById('introCard').style.display = 'block';
+  setPhase(4, 'complete');
+}
+
+// ---- Haversine ----
+function haversine(lat1, lon1, lat2, lon2) {
+  const R = 6371;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180) * Math.cos(lat2*Math.PI/180) * Math.sin(dLon/2)**2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+// ---- Init ----
+initMap();
+</script>
+</body>
+</html>

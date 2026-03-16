@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HALO — Agent Matching Demo</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: #0a0a0f;
+    color: #e0e0e0;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .app {
+    display: grid;
+    grid-template-columns: 400px 1fr;
+    height: 100vh;
+  }
+
+  /* LEFT PANEL */
+  .panel {
+    background: linear-gradient(180deg, #0f0f1a 0%, #0a0a12 100%);
+    border-right: 1px solid rgba(139, 92, 246, 0.15);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+  }
+
+  .logo-area {
+    padding: 28px 28px 20px;
+    border-bottom: 1px solid rgba(139, 92, 246, 0.1);
+  }
+
+  .logo {
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: 6px;
+    background: linear-gradient(135deg, #a78bfa, #7c3aed, #6d28d9);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .logo-sub {
+    font-size: 11px;
+    color: #6b7280;
+    letter-spacing: 2px;
+    margin-top: 4px;
+    text-transform: uppercase;
+  }
+
+  .input-section {
+    padding: 24px 28px;
+    border-bottom: 1px solid rgba(139, 92, 246, 0.1);
+  }
+
+  .input-section h3 {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #8b5cf6;
+    margin-bottom: 14px;
+    font-weight: 600;
+  }
+
+  .attr-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .attr-tag {
+    background: rgba(139, 92, 246, 0.12);
+    border: 1px solid rgba(139, 92, 246, 0.25);
+    color: #c4b5fd;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+    user-select: none;
+  }
+
+  .attr-tag:hover {
+    background: rgba(139, 92, 246, 0.25);
+    border-color: rgba(139, 92, 246, 0.5);
+  }
+
+  .attr-tag.selected {
+    background: rgba(139, 92, 246, 0.35);
+    border-color: #8b5cf6;
+    color: #fff;
+    box-shadow: 0 0 12px rgba(139, 92, 246, 0.3);
+  }
+
+  .custom-input-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  .custom-input {
+    flex: 1;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(139, 92, 246, 0.2);
+    color: #e0e0e0;
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-family: 'Inter', sans-serif;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .custom-input:focus {
+    border-color: #8b5cf6;
+  }
+
+  .custom-input::placeholder { color: #4b5563; }
+
+  .add-btn {
+    background: rgba(139, 92, 246, 0.2);
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    color: #a78bfa;
+    padding: 10px 16px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.2s;
+  }
+
+  .add-btn:hover {
+    background: rgba(139, 92, 246, 0.35);
+  }
+
+  .run-btn {
+    width: 100%;
+    padding: 14px;
+    margin-top: 18px;
+    background: linear-gradient(135deg, #7c3aed, #6d28d9);
+    border: none;
+    color: white;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: 'Inter', sans-serif;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .run-btn:hover {
+    box-shadow: 0 0 30px rgba(139, 92, 246, 0.4);
+    transform: translateY(-1px);
+  }
+
+  .run-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+
+  .run-btn.scanning {
+    animation: pulse-glow 1.5s ease-in-out infinite;
+  }
+
+  @keyframes pulse-glow {
+    0%, 100% { box-shadow: 0 0 15px rgba(139, 92, 246, 0.3); }
+    50% { box-shadow: 0 0 40px rgba(139, 92, 246, 0.6); }
+  }
+
+  /* SELECTED ATTRIBUTES DISPLAY */
+  .selected-attrs {
+    padding: 16px 28px;
+    border-bottom: 1px solid rgba(139, 92, 246, 0.1);
+    min-height: 60px;
+  }
+
+  .selected-attrs h3 {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #6b7280;
+    margin-bottom: 10px;
+    font-weight: 600;
+  }
+
+  .active-attrs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .active-attr {
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(109, 40, 217, 0.3));
+    border: 1px solid #8b5cf6;
+    color: #e9d5ff;
+    padding: 5px 12px;
+    border-radius: 16px;
+    font-size: 12px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .active-attr .remove {
+    cursor: pointer;
+    opacity: 0.6;
+    font-size: 14px;
+    line-height: 1;
+  }
+
+  .active-attr .remove:hover { opacity: 1; }
+
+  /* RESULTS */
+  .results-section {
+    flex: 1;
+    padding: 0 28px 28px;
+    overflow-y: auto;
+  }
+
+  .results-section h3 {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #8b5cf6;
+    margin: 20px 0 14px;
+    font-weight: 600;
+  }
+
+  .match-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(139, 92, 246, 0.12);
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: all 0.25s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .match-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px;
+    height: 100%;
+    border-radius: 3px 0 0 3px;
+  }
+
+  .match-card.tier-1::before { background: #22c55e; }
+  .match-card.tier-2::before { background: #a78bfa; }
+  .match-card.tier-3::before { background: #f59e0b; }
+
+  .match-card:hover {
+    background: rgba(139, 92, 246, 0.08);
+    border-color: rgba(139, 92, 246, 0.3);
+    transform: translateX(3px);
+  }
+
+  .match-card.active {
+    background: rgba(139, 92, 246, 0.12);
+    border-color: #8b5cf6;
+  }
+
+  .match-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
+  .match-name {
+    font-weight: 600;
+    font-size: 15px;
+    color: #f3f4f6;
+  }
+
+  .match-score {
+    font-size: 13px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 12px;
+  }
+
+  .tier-1 .match-score { background: rgba(34,197,94,0.15); color: #4ade80; }
+  .tier-2 .match-score { background: rgba(167,139,250,0.15); color: #c4b5fd; }
+  .tier-3 .match-score { background: rgba(245,158,11,0.15); color: #fbbf24; }
+
+  .match-detail {
+    font-size: 12px;
+    color: #9ca3af;
+    line-height: 1.5;
+  }
+
+  .match-location {
+    font-size: 11px;
+    color: #6b7280;
+    margin-top: 6px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .match-traits {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 8px;
+  }
+
+  .match-trait {
+    font-size: 10px;
+    padding: 2px 8px;
+    background: rgba(139, 92, 246, 0.1);
+    border-radius: 8px;
+    color: #a78bfa;
+  }
+
+  .match-trait.hit {
+    background: rgba(34, 197, 94, 0.15);
+    color: #4ade80;
+  }
+
+  /* AGENT LOG */
+  .agent-log {
+    padding: 16px 28px;
+    border-bottom: 1px solid rgba(139, 92, 246, 0.1);
+    max-height: 180px;
+    overflow-y: auto;
+  }
+
+  .agent-log h3 {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #6b7280;
+    margin-bottom: 10px;
+    font-weight: 600;
+  }
+
+  .log-line {
+    font-size: 11px;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    color: #6b7280;
+    padding: 3px 0;
+    opacity: 0;
+    animation: fadeIn 0.3s ease forwards;
+  }
+
+  .log-line .timestamp { color: #4b5563; }
+  .log-line .action { color: #8b5cf6; }
+  .log-line .result { color: #22c55e; }
+  .log-line .warn { color: #f59e0b; }
+
+  @keyframes fadeIn {
+    to { opacity: 1; }
+  }
+
+  /* MAP */
+  .map-container {
+    position: relative;
+    height: 100%;
+  }
+
+  #map {
+    width: 100%;
+    height: 100%;
+    background: #0f0f1a;
+  }
+
+  .leaflet-tile-pane { filter: saturate(0.3) brightness(0.6) contrast(1.2); }
+
+  .map-overlay {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 999;
+    background: rgba(10, 10, 15, 0.85);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(139, 92, 246, 0.2);
+    border-radius: 14px;
+    padding: 18px;
+    min-width: 220px;
+  }
+
+  .map-overlay h4 {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #8b5cf6;
+    margin-bottom: 12px;
+  }
+
+  .stat-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 0;
+    font-size: 13px;
+  }
+
+  .stat-label { color: #6b7280; }
+  .stat-value { color: #e0e0e0; font-weight: 600; }
+  .stat-value.highlight { color: #4ade80; }
+
+  /* SCAN ANIMATION */
+  .scan-ring {
+    border: 2px solid rgba(139, 92, 246, 0.6);
+    border-radius: 50%;
+    animation: scan-expand 2s ease-out forwards;
+    pointer-events: none;
+  }
+
+  @keyframes scan-expand {
+    0% { opacity: 0.8; transform: scale(0.1); }
+    100% { opacity: 0; transform: scale(1); }
+  }
+
+  /* Custom marker */
+  .custom-marker {
+    position: relative;
+  }
+
+  .marker-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 2px solid white;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .marker-pulse {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    animation: marker-pulse 2s ease-out infinite;
+  }
+
+  @keyframes marker-pulse {
+    0% { opacity: 0.5; transform: translate(-50%, -50%) scale(0.5); }
+    100% { opacity: 0; transform: translate(-50%, -50%) scale(1.5); }
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: #4b5563;
+  }
+
+  .empty-state .icon { font-size: 32px; margin-bottom: 12px; }
+  .empty-state p { font-size: 13px; line-height: 1.6; }
+
+  .leaflet-popup-content-wrapper {
+    background: rgba(15, 15, 26, 0.95) !important;
+    border: 1px solid rgba(139, 92, 246, 0.3) !important;
+    border-radius: 12px !important;
+    color: #e0e0e0 !important;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5) !important;
+  }
+
+  .leaflet-popup-tip {
+    background: rgba(15, 15, 26, 0.95) !important;
+    border: 1px solid rgba(139, 92, 246, 0.3) !important;
+  }
+
+  .leaflet-popup-content {
+    margin: 14px !important;
+    font-family: 'Inter', sans-serif !important;
+    font-size: 13px !important;
+  }
+
+  .popup-name { font-weight: 700; font-size: 15px; color: #f3f4f6; }
+  .popup-score { color: #4ade80; font-weight: 600; margin-left: 8px; }
+  .popup-detail { color: #9ca3af; margin-top: 6px; font-size: 12px; line-height: 1.5; }
+  .popup-coords { color: #6b7280; font-size: 11px; margin-top: 6px; font-family: monospace; }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="panel">
+    <div class="logo-area">
+      <div class="logo">HALO</div>
+      <div class="logo-sub">Agent Matching Engine v0.1</div>
+    </div>
+
+    <div class="input-section">
+      <h3>Select Attributes</h3>
+      <div class="attr-tags" id="presetTags"></div>
+      <div class="custom-input-row">
+        <input class="custom-input" id="customAttr" placeholder="Type a custom attribute..." />
+        <button class="add-btn" onclick="addCustomAttr()">Add</button>
+      </div>
+      <button class="run-btn" id="runBtn" onclick="runMatching()" disabled>
+        DEPLOY AGENTS
+      </button>
+    </div>
+
+    <div class="selected-attrs">
+      <h3>Active Query</h3>
+      <div class="active-attrs" id="activeAttrs">
+        <span style="color:#4b5563; font-size:12px;">No attributes selected</span>
+      </div>
+    </div>
+
+    <div class="agent-log" id="agentLog" style="display:none;">
+      <h3>Agent Negotiation Log</h3>
+      <div id="logLines"></div>
+    </div>
+
+    <div class="results-section" id="resultsSection">
+      <div class="empty-state">
+        <div class="icon">&#x1f52e;</div>
+        <p>Select one or more attributes and deploy agents to discover compatible matches in real-time.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="map-container">
+    <div id="map"></div>
+    <div class="map-overlay" id="mapOverlay" style="display:none;">
+      <h4>Scan Results</h4>
+      <div class="stat-row">
+        <span class="stat-label">Profiles Scanned</span>
+        <span class="stat-value" id="statScanned">—</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Agents Deployed</span>
+        <span class="stat-value" id="statAgents">—</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Matches Found</span>
+        <span class="stat-value highlight" id="statMatches">—</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Avg Compatibility</span>
+        <span class="stat-value highlight" id="statAvg">—</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Scan Radius</span>
+        <span class="stat-value" id="statRadius">—</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ---- SF User Database (simulated) ----
+const SF_PROFILES = [
+  { id: 1, name: "Maya Chen", age: 28, lat: 37.8005, lng: -122.4365, area: "Marina District",
+    traits: ["emotionally secure", "adventurous", "creative", "empathetic", "open-minded", "values growth"],
+    attachment: "secure", eq: 88, comm: 91, bio: "UX designer, rock climber, weekend ceramics. Values deep conversation over small talk." },
+  { id: 2, name: "Jordan Rivera", age: 31, lat: 37.7985, lng: -122.4310, area: "Marina District",
+    traits: ["ambitious", "emotionally intelligent", "loyal", "adventurous", "independent", "values honesty"],
+    attachment: "secure", eq: 92, comm: 87, bio: "Startup founder. Surfs at dawn, reads philosophy at night. Looking for intellectual equal." },
+  { id: 3, name: "Alex Kim", age: 26, lat: 37.7610, lng: -122.4340, area: "Castro",
+    traits: ["creative", "introverted", "empathetic", "values authenticity", "emotionally aware", "gentle"],
+    attachment: "secure-anxious", eq: 85, comm: 78, bio: "Musician and barista. Writes songs about strangers. Deep feeler, slow to trust." },
+  { id: 4, name: "Sam Okafor", age: 29, lat: 37.7625, lng: -122.4310, area: "Castro",
+    traits: ["outgoing", "adventurous", "values community", "emotionally secure", "spontaneous", "warm"],
+    attachment: "secure", eq: 90, comm: 93, bio: "Community organizer. Throws legendary potlucks. Believes love should feel easy." },
+  { id: 5, name: "Riley Park", age: 27, lat: 37.7950, lng: -122.4070, area: "Pacific Heights",
+    traits: ["analytical", "loyal", "values stability", "patient", "introverted", "thoughtful"],
+    attachment: "secure-avoidant", eq: 76, comm: 82, bio: "Data scientist. Chess player. Needs a lot of space but shows love through acts of service." },
+  { id: 6, name: "Charlie Dubois", age: 30, lat: 37.7750, lng: -122.4180, area: "Hayes Valley",
+    traits: ["creative", "open-minded", "emotionally intelligent", "values freedom", "adventurous", "philosophical"],
+    attachment: "secure", eq: 94, comm: 89, bio: "Chef and poet. Traveled 30 countries. Seeks someone who challenges them intellectually." },
+  { id: 7, name: "Taylor Nguyen", age: 25, lat: 37.7590, lng: -122.4215, area: "Mission",
+    traits: ["passionate", "empathetic", "values justice", "creative", "outgoing", "emotionally expressive"],
+    attachment: "anxious", eq: 82, comm: 85, bio: "Muralist and activist. Wears their heart on their sleeve. Love language: quality time." },
+  { id: 8, name: "Morgan Hayes", age: 33, lat: 37.7870, lng: -122.4090, area: "Nob Hill",
+    traits: ["ambitious", "values growth", "emotionally secure", "disciplined", "loyal", "adventurous"],
+    attachment: "secure", eq: 86, comm: 84, bio: "VC partner. Marathoner. Wants a partner who has their own world but wants to merge." },
+  { id: 9, name: "Quinn Sato", age: 28, lat: 37.8030, lng: -122.4385, area: "Marina District",
+    traits: ["warm", "empathetic", "values family", "gentle", "creative", "emotionally aware"],
+    attachment: "secure", eq: 91, comm: 90, bio: "Pediatric nurse. Paints watercolors on Sundays. Love is showing up consistently." },
+  { id: 10, name: "Avery Lawson", age: 32, lat: 37.7695, lng: -122.4285, area: "Duboce Triangle",
+    traits: ["independent", "analytical", "values honesty", "adventurous", "emotionally secure", "witty"],
+    attachment: "secure-avoidant", eq: 79, comm: 88, bio: "Aerospace engineer. Weekend trail runner. Dry humor. Takes time to open up but worth it." },
+  { id: 11, name: "Dakota Reyes", age: 29, lat: 37.7560, lng: -122.4180, area: "Mission",
+    traits: ["spontaneous", "passionate", "creative", "values authenticity", "empathetic", "open-minded"],
+    attachment: "anxious-secure", eq: 84, comm: 86, bio: "DJ and graphic designer. Lives for live music and late night conversations about meaning." },
+  { id: 12, name: "Sage Patel", age: 27, lat: 37.7720, lng: -122.4375, area: "Inner Sunset",
+    traits: ["calm", "values growth", "emotionally intelligent", "patient", "introverted", "gentle"],
+    attachment: "secure", eq: 93, comm: 80, bio: "Therapist in training. Daily meditator. Believes vulnerability is the highest form of courage." },
+  { id: 13, name: "Kai Johansson", age: 30, lat: 37.7920, lng: -122.4410, area: "Richmond",
+    traits: ["adventurous", "outgoing", "values community", "warm", "spontaneous", "emotionally expressive"],
+    attachment: "secure", eq: 87, comm: 92, bio: "Marine biologist. Cooks for friends every Friday. Adventure is a love language." },
+  { id: 14, name: "Rowan Mitchell", age: 26, lat: 37.7655, lng: -122.4260, area: "Noe Valley",
+    traits: ["creative", "empathetic", "values authenticity", "introverted", "thoughtful", "loyal"],
+    attachment: "secure-anxious", eq: 81, comm: 77, bio: "Bookshop owner. Writes letters by hand. Looking for someone who slows down." },
+  { id: 15, name: "Emery Washington", age: 34, lat: 37.7840, lng: -122.4155, area: "Lower Haight",
+    traits: ["ambitious", "emotionally secure", "values honesty", "disciplined", "independent", "analytical"],
+    attachment: "secure", eq: 83, comm: 86, bio: "Attorney turned nonprofit director. Decisive. Wants a partner, not a project." },
+  { id: 16, name: "Lennox Cruz", age: 25, lat: 37.7580, lng: -122.4148, area: "Mission Dolores",
+    traits: ["passionate", "adventurous", "creative", "open-minded", "values freedom", "spontaneous"],
+    attachment: "anxious", eq: 78, comm: 83, bio: "Filmmaker. Always chasing light — literal and metaphorical. Intense in the best way." },
+  { id: 17, name: "Harper Singh", age: 31, lat: 37.7998, lng: -122.4290, area: "Cow Hollow",
+    traits: ["warm", "values stability", "emotionally intelligent", "loyal", "patient", "gentle"],
+    attachment: "secure", eq: 90, comm: 91, bio: "Product manager at health startup. Golden retriever energy. Knows all the good brunch spots." },
+  { id: 18, name: "Finley O'Brien", age: 28, lat: 37.7680, lng: -122.4200, area: "Duboce Triangle",
+    traits: ["witty", "independent", "analytical", "values growth", "adventurous", "emotionally aware"],
+    attachment: "secure-avoidant", eq: 80, comm: 85, bio: "Stand-up comic and software engineer. Copes with humor but goes deep when it matters." },
+];
+
+// ---- Attribute categories ----
+const PRESET_ATTRS = [
+  "emotionally secure", "adventurous", "creative", "empathetic",
+  "ambitious", "introverted", "outgoing", "loyal",
+  "open-minded", "values honesty", "values growth", "spontaneous",
+  "independent", "patient", "passionate", "gentle",
+  "emotionally intelligent", "warm", "analytical", "witty"
+];
+
+let selectedAttrs = [];
+let matchMarkers = [];
+let scanCircle = null;
+let map;
+
+// ---- Init Map ----
+function initMap() {
+  map = L.map('map', {
+    center: [37.7749, -122.4194],
+    zoom: 13,
+    zoomControl: false
+  });
+
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; OpenStreetMap & CartoDB',
+    maxZoom: 19
+  }).addTo(map);
+
+  L.control.zoom({ position: 'bottomright' }).addTo(map);
+}
+
+// ---- Render Preset Tags ----
+function renderPresets() {
+  const container = document.getElementById('presetTags');
+  PRESET_ATTRS.forEach(attr => {
+    const tag = document.createElement('div');
+    tag.className = 'attr-tag';
+    tag.textContent = attr;
+    tag.onclick = () => toggleAttr(attr, tag);
+    container.appendChild(tag);
+  });
+}
+
+function toggleAttr(attr, el) {
+  if (selectedAttrs.includes(attr)) {
+    selectedAttrs = selectedAttrs.filter(a => a !== attr);
+    el.classList.remove('selected');
+  } else {
+    selectedAttrs.push(attr);
+    el.classList.add('selected');
+  }
+  updateActiveDisplay();
+}
+
+function addCustomAttr() {
+  const input = document.getElementById('customAttr');
+  const val = input.value.trim().toLowerCase();
+  if (val && !selectedAttrs.includes(val)) {
+    selectedAttrs.push(val);
+    updateActiveDisplay();
+  }
+  input.value = '';
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('customAttr').addEventListener('keydown', e => {
+    if (e.key === 'Enter') addCustomAttr();
+  });
+});
+
+function updateActiveDisplay() {
+  const container = document.getElementById('activeAttrs');
+  const btn = document.getElementById('runBtn');
+
+  if (selectedAttrs.length === 0) {
+    container.innerHTML = '<span style="color:#4b5563; font-size:12px;">No attributes selected</span>';
+    btn.disabled = true;
+    return;
+  }
+
+  btn.disabled = false;
+  container.innerHTML = selectedAttrs.map(a =>
+    `<span class="active-attr">${a} <span class="remove" onclick="removeAttr('${a}')">×</span></span>`
+  ).join('');
+}
+
+function removeAttr(attr) {
+  selectedAttrs = selectedAttrs.filter(a => a !== attr);
+  document.querySelectorAll('.attr-tag').forEach(tag => {
+    if (tag.textContent === attr) tag.classList.remove('selected');
+  });
+  updateActiveDisplay();
+}
+
+// ---- Matching Engine ----
+function computeScore(profile, queryAttrs) {
+  let score = 0;
+  let maxScore = queryAttrs.length;
+  let matchedTraits = [];
+
+  queryAttrs.forEach(attr => {
+    const attrLower = attr.toLowerCase();
+    // Direct trait match
+    if (profile.traits.some(t => t.includes(attrLower) || attrLower.includes(t))) {
+      score += 1;
+      matchedTraits.push(attr);
+    }
+    // Semantic proximity (simple keyword matching for demo)
+    else {
+      const semanticMap = {
+        "emotionally secure": ["secure", "emotionally aware", "emotionally intelligent"],
+        "adventurous": ["spontaneous", "open-minded", "values freedom"],
+        "creative": ["passionate", "artistic"],
+        "empathetic": ["warm", "gentle", "emotionally expressive", "emotionally aware"],
+        "ambitious": ["disciplined", "independent", "values growth"],
+        "introverted": ["thoughtful", "patient", "calm", "analytical"],
+        "outgoing": ["warm", "spontaneous", "values community"],
+        "loyal": ["patient", "values stability", "values family"],
+        "open-minded": ["creative", "values freedom", "values authenticity"],
+        "values honesty": ["values authenticity", "independent", "analytical"],
+        "values growth": ["ambitious", "emotionally intelligent", "open-minded"],
+        "spontaneous": ["adventurous", "outgoing", "passionate"],
+        "independent": ["ambitious", "analytical", "values freedom"],
+        "patient": ["gentle", "calm", "loyal", "emotionally secure"],
+        "passionate": ["creative", "spontaneous", "emotionally expressive"],
+        "gentle": ["empathetic", "warm", "patient", "calm"],
+        "emotionally intelligent": ["emotionally secure", "emotionally aware", "empathetic"],
+        "warm": ["empathetic", "outgoing", "gentle", "values community"],
+        "analytical": ["independent", "introverted", "thoughtful"],
+        "witty": ["creative", "outgoing", "independent"]
+      };
+
+      const related = semanticMap[attrLower] || [];
+      if (profile.traits.some(t => related.includes(t))) {
+        score += 0.6;
+        matchedTraits.push(attr + " (semantic)");
+      }
+    }
+  });
+
+  // Bonus from EQ and communication scores
+  const eqBonus = (profile.eq / 100) * 0.15;
+  const commBonus = (profile.comm / 100) * 0.1;
+
+  // Attachment style bonus
+  const attachBonus = profile.attachment === "secure" ? 0.1 : 0;
+
+  const rawScore = maxScore > 0 ? (score / maxScore) : 0;
+  const finalScore = Math.min(0.99, rawScore + eqBonus + commBonus + attachBonus);
+
+  return { score: finalScore, matchedTraits };
+}
+
+// ---- Agent Log ----
+function addLog(text, type = 'action') {
+  const logDiv = document.getElementById('logLines');
+  const line = document.createElement('div');
+  line.className = 'log-line';
+  const time = new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  line.innerHTML = `<span class="timestamp">[${time}]</span> <span class="${type}">${text}</span>`;
+  logDiv.appendChild(line);
+  logDiv.scrollTop = logDiv.scrollHeight;
+}
+
+// ---- Run Matching ----
+async function runMatching() {
+  const btn = document.getElementById('runBtn');
+  const logSection = document.getElementById('agentLog');
+  const logLines = document.getElementById('logLines');
+  const resultsSection = document.getElementById('resultsSection');
+  const overlay = document.getElementById('mapOverlay');
+
+  btn.disabled = true;
+  btn.classList.add('scanning');
+  btn.textContent = 'SCANNING...';
+  logSection.style.display = 'block';
+  logLines.innerHTML = '';
+  overlay.style.display = 'block';
+  resultsSection.innerHTML = '<h3>Matches</h3>';
+
+  // Clear previous markers
+  matchMarkers.forEach(m => map.removeLayer(m));
+  matchMarkers = [];
+  if (scanCircle) map.removeLayer(scanCircle);
+
+  // Animate scan ring on map
+  const center = map.getCenter();
+  scanCircle = L.circle([center.lat, center.lng], {
+    radius: 3000,
+    color: '#8b5cf6',
+    fillColor: '#8b5cf6',
+    fillOpacity: 0.05,
+    weight: 1
+  }).addTo(map);
+
+  const attrs = [...selectedAttrs];
+
+  // Simulated agent log sequence
+  const logs = [
+    { text: `Initializing agent swarm for ${attrs.length} attribute(s)...`, type: 'action', delay: 300 },
+    { text: `Query vector: [${attrs.join(', ')}]`, type: 'action', delay: 500 },
+    { text: `Deploying behavioral analysis agents to SF grid...`, type: 'action', delay: 700 },
+    { text: `Scanning ${SF_PROFILES.length} profiles in Marina / Castro / Mission...`, type: 'action', delay: 600 },
+    { text: `Agent-α: Evaluating attachment style distributions...`, type: 'action', delay: 500 },
+    { text: `Agent-β: Running emotional intelligence correlation...`, type: 'action', delay: 400 },
+    { text: `Agent-γ: Cross-referencing communication patterns...`, type: 'action', delay: 500 },
+    { text: `Semantic similarity engine engaged — expanding trait radius...`, type: 'action', delay: 600 },
+    { text: `Negotiation protocol: agents comparing compatibility vectors...`, type: 'action', delay: 500 },
+  ];
+
+  for (const log of logs) {
+    await sleep(log.delay);
+    addLog(log.text, log.type);
+  }
+
+  // Compute matches
+  let results = SF_PROFILES.map(p => {
+    const { score, matchedTraits } = computeScore(p, attrs);
+    return { ...p, score, matchedTraits };
+  }).filter(p => p.score > 0.35).sort((a, b) => b.score - a.score);
+
+  await sleep(400);
+  addLog(`Filtering: ${results.length} candidates above threshold...`, 'action');
+  await sleep(300);
+  addLog(`Agent negotiation complete. ${results.length} matches verified.`, 'result');
+
+  // Display results
+  for (let i = 0; i < results.length; i++) {
+    const r = results[i];
+    const pct = Math.round(r.score * 100);
+    const tier = pct >= 85 ? 1 : pct >= 70 ? 2 : 3;
+
+    await sleep(200 + Math.random() * 200);
+
+    // Add log
+    addLog(`GPS lock: ${r.name} — ${r.area} (${r.lat.toFixed(4)}, ${r.lng.toFixed(4)}) — ${pct}%`, 'result');
+
+    // Add marker to map
+    const color = tier === 1 ? '#22c55e' : tier === 2 ? '#a78bfa' : '#f59e0b';
+    const marker = L.circleMarker([r.lat, r.lng], {
+      radius: tier === 1 ? 10 : tier === 2 ? 8 : 6,
+      fillColor: color,
+      color: 'white',
+      weight: 2,
+      fillOpacity: 0.85
+    }).addTo(map);
+
+    marker.bindPopup(`
+      <div>
+        <span class="popup-name">${r.name}</span><span class="popup-score">${pct}%</span>
+        <div class="popup-detail">${r.bio}</div>
+        <div class="popup-detail" style="margin-top:4px">
+          <strong>EQ:</strong> ${r.eq}/100 &nbsp; <strong>Comm:</strong> ${r.comm}/100 &nbsp; <strong>Attachment:</strong> ${r.attachment}
+        </div>
+        <div class="popup-coords">${r.lat.toFixed(4)}°N, ${Math.abs(r.lng).toFixed(4)}°W</div>
+      </div>
+    `);
+
+    matchMarkers.push(marker);
+
+    // Add card
+    const card = document.createElement('div');
+    card.className = `match-card tier-${tier}`;
+    card.innerHTML = `
+      <div class="match-header">
+        <span class="match-name">${r.name}, ${r.age}</span>
+        <span class="match-score">${pct}%</span>
+      </div>
+      <div class="match-detail">${r.bio}</div>
+      <div class="match-location">&#x1f4cd; ${r.area} &nbsp;|&nbsp; EQ: ${r.eq} &nbsp;|&nbsp; Comm: ${r.comm}</div>
+      <div class="match-traits">
+        ${r.traits.map(t => {
+          const isHit = attrs.some(a => t.includes(a) || a.includes(t));
+          return `<span class="match-trait${isHit ? ' hit' : ''}">${t}</span>`;
+        }).join('')}
+      </div>
+    `;
+    card.onclick = () => {
+      map.flyTo([r.lat, r.lng], 15, { duration: 0.8 });
+      marker.openPopup();
+      document.querySelectorAll('.match-card').forEach(c => c.classList.remove('active'));
+      card.classList.add('active');
+    };
+    resultsSection.appendChild(card);
+  }
+
+  // Update stats
+  const avgScore = results.length > 0 ? Math.round(results.reduce((a, r) => a + r.score, 0) / results.length * 100) : 0;
+  document.getElementById('statScanned').textContent = SF_PROFILES.length;
+  document.getElementById('statAgents').textContent = '3 (α, β, γ)';
+  document.getElementById('statMatches').textContent = results.length;
+  document.getElementById('statAvg').textContent = avgScore + '%';
+  document.getElementById('statRadius').textContent = '3.0 km';
+
+  // Fit map to markers
+  if (matchMarkers.length > 0) {
+    const group = L.featureGroup(matchMarkers);
+    map.fitBounds(group.getBounds().pad(0.15), { duration: 1 });
+  }
+
+  btn.classList.remove('scanning');
+  btn.textContent = 'DEPLOY AGENTS';
+  btn.disabled = false;
+}
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+// ---- Init ----
+initMap();
+renderPresets();
+</script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+{
+  "prompt": "Ultra-realistic editorial photograph of two strangers meeting for the first time at a sleek, dimly-lit upscale coffee bar. Shot from behind a glass partition, voyeuristic composition. One person extending a hand, the other mid-smile with genuine surprise. Warm amber pendant lighting overhead casting soft pools of light on brushed concrete countertop. Background softly blurred with bokeh city lights through floor-to-ceiling windows at dusk. Natural skin texture with visible pores, unretouched. Slight lens flare from a pendant light. 85mm lens, f/1.8, ISO 400. Shallow depth of field isolating the subjects. Documentary realism, no posing, candid moment captured. Muted color palette with deep purple and amber tones. Do not beautify or alter facial features. No makeup styling. No studio lighting.",
+  "negative_prompt": "blurry, low resolution, distorted face, extra fingers, plastic skin, airbrushed texture, CGI, cartoon, anime, illustration, painting, sketch, oversaturated, neon colors, studio lighting, posed, stock photo feel, perfect symmetry, beautification filters, skin smoothing, anatomy normalization, editorial fashion proportions",
+  "api_parameters": {
+    "aspect_ratio": "16:9",
+    "resolution": "2K",
+    "output_format": "png"
+  }
+}

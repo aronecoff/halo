@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HALO</title>
+  <meta name="description" content="An operating system for the most valuable thing you will ever build: your connections.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='36' fill='none' stroke='%236D28D9' stroke-width='10'/></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Loader -->
+  <div id="loader">
+    <div class="loader-ring"></div>
+  </div>
+
+  <!-- Nav -->
+  <header class="site-header">
+    <nav>
+      <div class="nav-logo">
+        <svg viewBox="40 28 300 84" width="120" height="32">
+          <path d="M 50 106 L 50 34" fill="none" stroke="#A78BFA" stroke-width="6" stroke-linecap="square"/>
+          <path d="M 86 106 L 86 34" fill="none" stroke="#A78BFA" stroke-width="6" stroke-linecap="square"/>
+          <path d="M 50 72 L 86 68" fill="none" stroke="#A78BFA" stroke-width="6" stroke-linecap="square"/>
+          <path d="M 112 106 L 142 34 L 172 106" fill="none" stroke="#A78BFA" stroke-width="6" stroke-linecap="square" stroke-linejoin="miter"/>
+          <path d="M 198 34 L 198 106 L 240 106" fill="none" stroke="#A78BFA" stroke-width="6" stroke-linecap="square" stroke-linejoin="miter"/>
+          <circle cx="302" cy="70" r="36" fill="none" stroke="#A78BFA" stroke-width="10"/>
+        </svg>
+        <span class="logo-sub">connections</span>
+      </div>
+      <div class="nav-links">
+        <a href="#how">How It Works</a>
+        <a href="#safety">Trust</a>
+        <a href="#cta" class="nav-cta">Early Access</a>
+      </div>
+      <button class="mobile-menu" aria-label="Menu">
+        <span></span><span></span>
+      </button>
+    </nav>
+  </header>
+
+  <!-- Mobile Nav -->
+  <div class="mobile-nav">
+    <a href="#how">How It Works</a>
+    <a href="#safety">Trust</a>
+    <a href="#cta" class="nav-cta">Early Access</a>
+  </div>
+
+  <!-- Hero -->
+  <section class="hero" id="hero">
+    <canvas id="orb-canvas"></canvas>
+    <div class="hero-content">
+      <h1>You were not meant<br>to <span class="gradient-text">swipe.</span></h1>
+      <p class="hero-sub">An operating system for the most valuable thing you will ever build: your connections.</p>
+      <a href="#cta" class="btn-primary">Get Early Access</a>
+    </div>
+    <div class="scroll-indicator">
+      <div class="scroll-line"></div>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section class="section" id="how">
+    <div class="container">
+      <h2 data-anim="fade-up">Three phases.<br><span class="gradient-text">Zero effort.</span></h2>
+      <div class="steps-grid">
+        <div class="step-card" data-anim="slide-up" data-delay="0">
+          <div class="step-num">01</div>
+          <h3>Speak</h3>
+          <p>A conversation. Not a form. Your agent builds a private model of who you are and what you actually need.</p>
+        </div>
+        <div class="step-card" data-anim="slide-up" data-delay="1">
+          <div class="step-num">02</div>
+          <h3>Match</h3>
+          <p>Your agent works autonomously. Identifies the right people. Coordinates the logistics. You do nothing.</p>
+        </div>
+        <div class="step-card" data-anim="slide-up" data-delay="2">
+          <div class="step-num">03</div>
+          <h3>Arrive</h3>
+          <p>A place. A time. A reason to talk. Everything else stays hidden until you are both there.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Safety -->
+  <section class="section section-dark" id="safety">
+    <div class="container">
+      <h2 data-anim="fade-up">Trust is<br><span class="gradient-text">non-negotiable.</span></h2>
+      <div class="safety-grid">
+        <div class="safety-item" data-anim="slide-left" data-delay="0">
+          <h4>Public only</h4>
+          <p>Every location is verified before it is ever suggested.</p>
+        </div>
+        <div class="safety-item" data-anim="slide-right" data-delay="1">
+          <h4>Nothing shared early</h4>
+          <p>Your information stays yours until the moment it matters.</p>
+        </div>
+        <div class="safety-item" data-anim="slide-left" data-delay="2">
+          <h4>Always monitored</h4>
+          <p>One tap if something feels off. We handle the rest.</p>
+        </div>
+        <div class="safety-item" data-anim="slide-right" data-delay="3">
+          <h4>Self-correcting</h4>
+          <p>The network protects itself. Bad actors do not last.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Architecture -->
+  <section class="section" id="features">
+    <div class="container">
+      <h2 data-anim="fade-up">Built <span class="gradient-text">differently.</span></h2>
+      <div class="features-grid">
+        <div class="feature-card" data-anim="scale-up" data-delay="0">
+          <h4>Finally working for you</h4>
+          <p>Every other platform learns about you to sell attention. HALO learns about you to find the right people.</p>
+        </div>
+        <div class="feature-card" data-anim="scale-up" data-delay="1">
+          <h4>Protected until present</h4>
+          <p>Nothing is revealed until you are both there. No photos. No names. No browsing.</p>
+        </div>
+        <div class="feature-card" data-anim="scale-up" data-delay="2">
+          <h4>Gets sharper over time</h4>
+          <p>The system learns from every interaction. The longer you are in, the better the introductions become.</p>
+        </div>
+        <div class="feature-card" data-anim="scale-up" data-delay="3">
+          <h4>Not just dating</h4>
+          <p>Romance, friendship, mentorship, collaborators. The protocol is the same. The context changes.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Mission -->
+  <section class="section section-dark" id="mission">
+    <div class="container mission-container">
+      <p class="mission-label" data-anim="fade-up">Our belief</p>
+      <p class="mission-text" data-anim="fade-up" data-delay="1">The people you have not met yet will change everything. Technology has spent twenty years making that harder. We built something to make it inevitable.</p>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section section-cta" id="cta">
+    <canvas id="cta-canvas"></canvas>
+    <div class="container cta-container">
+      <h2 data-anim="fade-up">This is how it<br><span class="gradient-text">should have always worked.</span></h2>
+      <p data-anim="fade-up" data-delay="1">Drop your handle. First wave rolls out in select cities.</p>
+      <form class="cta-form" id="waitlist-form" data-anim="fade-up" data-delay="2">
+        <input type="text" placeholder="@instagram, phone, or email" required>
+        <button type="submit" class="btn-primary">Reserve My Spot</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container footer-inner">
+      <div class="footer-logo">
+        <svg viewBox="40 28 300 84" width="90" height="24">
+          <path d="M 50 106 L 50 34" fill="none" stroke="#A78BFA" stroke-width="6" stroke-linecap="square"/>
+          <path d="M 86 106 L 86 34" fill="none" stroke="#A78BFA" stroke-width="6" stroke-linecap="square"/>
+          <path d="M 50 72 L 86 68" fill="none" stroke="#A78BFA" stroke-width="6" stroke-linecap="square"/>
+          <path d="M 112 106 L 142 34 L 172 106" fill="none" stroke="#A78BFA" stroke-width="6" stroke-linecap="square" stroke-linejoin="miter"/>
+          <path d="M 198 34 L 198 106 L 240 106" fill="none" stroke="#A78BFA" stroke-width="6" stroke-linecap="square" stroke-linejoin="miter"/>
+          <circle cx="302" cy="70" r="36" fill="none" stroke="#A78BFA" stroke-width="10"/>
+        </svg>
+        <span class="logo-sub">connections</span>
+      </div>
+      <p class="footer-copy">&copy; 2026 Halo Connections Inc.</p>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1/dist/lenis.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

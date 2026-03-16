@@ -1,0 +1,1287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HALO — App Wireframe</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@300;400;500;600;700&display=swap');
+
+  :root {
+    --dark: #1A0A14;
+    --berry: #6D2E46;
+    --dusty: #A26769;
+    --cream: #F7F0E8;
+    --warm: #ECE2D0;
+    --accent: #C4574A;
+    --gold: #D4A843;
+    --text: #2A1A22;
+    --muted: #8C7A82;
+    --green: #2D7A3A;
+    --card: #FFFFFF;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: #1a1a2e;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+  }
+
+  /* Navigation map at top */
+  .flow-map {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: 900px;
+  }
+  .flow-dot {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 2px solid transparent;
+    color: #666;
+    background: #2a2a3e;
+  }
+  .flow-dot:hover { background: #3a3a4e; }
+  .flow-dot.active { background: var(--berry); color: white; border-color: var(--gold); }
+  .flow-dot.section-start { border-color: var(--dusty); }
+  .flow-arrow { color: #444; font-size: 14px; }
+  .flow-label {
+    font-size: 9px;
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    width: 100%;
+    text-align: center;
+    margin: 8px 0 4px;
+    font-weight: 600;
+  }
+
+  /* Phone frame */
+  .phone-container {
+    display: flex;
+    gap: 40px;
+    align-items: flex-start;
+  }
+  .phone {
+    width: 375px;
+    height: 812px;
+    background: var(--cream);
+    border-radius: 44px;
+    overflow: hidden;
+    box-shadow: 0 0 0 12px #111, 0 0 0 14px #333, 0 20px 60px rgba(0,0,0,0.5);
+    position: relative;
+    flex-shrink: 0;
+  }
+  .phone-notch {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 150px;
+    height: 30px;
+    background: #111;
+    border-radius: 0 0 20px 20px;
+    z-index: 100;
+  }
+  .phone-home {
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 4px;
+    background: rgba(0,0,0,0.2);
+    border-radius: 2px;
+    z-index: 100;
+  }
+
+  /* Screen content */
+  .screen {
+    display: none;
+    width: 100%;
+    height: 100%;
+    flex-direction: column;
+    overflow-y: auto;
+  }
+  .screen.active { display: flex; }
+
+  /* Annotation panel */
+  .annotation {
+    width: 340px;
+    flex-shrink: 0;
+  }
+  .annotation h3 {
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-size: 22px;
+    color: var(--cream);
+    margin-bottom: 4px;
+  }
+  .annotation .screen-id {
+    font-size: 11px;
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 16px;
+  }
+  .annotation p {
+    font-size: 13px;
+    color: #aaa;
+    line-height: 1.6;
+    margin-bottom: 12px;
+  }
+  .annotation .action-label {
+    font-size: 11px;
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 16px;
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+  .annotation .action-item {
+    font-size: 12px;
+    color: #ccc;
+    padding: 6px 0;
+    border-bottom: 1px solid #2a2a3e;
+    cursor: pointer;
+    transition: color 0.2s;
+  }
+  .annotation .action-item:hover { color: var(--gold); }
+  .annotation .action-item span { color: var(--dusty); }
+
+  /* ===== SCREEN STYLES ===== */
+
+  /* Status bar */
+  .status-bar {
+    height: 50px;
+    padding: 30px 24px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+
+  /* Generic components */
+  .screen-header {
+    padding: 16px 24px 12px;
+    flex-shrink: 0;
+  }
+  .screen-header h1 {
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-size: 28px;
+    color: var(--dark);
+  }
+  .screen-header .sub {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  .screen-body {
+    flex: 1;
+    padding: 0 24px 24px;
+    overflow-y: auto;
+  }
+
+  .btn {
+    display: block;
+    width: 100%;
+    padding: 16px;
+    border: none;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s;
+    margin-top: 12px;
+  }
+  .btn-primary { background: var(--berry); color: white; }
+  .btn-primary:hover { background: #7d3a54; }
+  .btn-secondary { background: transparent; color: var(--berry); border: 1.5px solid var(--berry); }
+  .btn-ghost { background: transparent; color: var(--muted); font-size: 13px; }
+
+  .card {
+    background: white;
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  }
+
+  .tab-bar {
+    display: flex;
+    height: 72px;
+    background: white;
+    border-top: 1px solid #eee;
+    flex-shrink: 0;
+  }
+  .tab {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    font-size: 10px;
+    color: var(--muted);
+    cursor: pointer;
+  }
+  .tab.active { color: var(--berry); }
+  .tab-icon {
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    background: currentColor;
+    opacity: 0.3;
+  }
+  .tab.active .tab-icon { opacity: 0.8; }
+
+  /* ===== SPECIFIC SCREENS ===== */
+
+  /* S0: Splash / Download */
+  .splash-screen {
+    background: var(--dark);
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 40px;
+  }
+  .splash-screen .logo {
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-size: 52px;
+    color: var(--cream);
+    letter-spacing: 8px;
+    margin-bottom: 8px;
+  }
+  .splash-screen .gold-line {
+    width: 60px;
+    height: 2px;
+    background: var(--gold);
+    margin: 12px auto 16px;
+  }
+  .splash-screen .tagline {
+    font-size: 16px;
+    color: var(--warm);
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-style: italic;
+    margin-bottom: 8px;
+    line-height: 1.5;
+  }
+  .splash-screen .sub-tag {
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 40px;
+    line-height: 1.5;
+  }
+  .splash-screen .btn-primary {
+    background: var(--berry);
+    margin-bottom: 8px;
+  }
+
+  /* S1: Value prop screens */
+  .value-screen {
+    background: var(--dark);
+    padding: 60px 28px 40px;
+    text-align: center;
+    justify-content: space-between;
+  }
+  .value-screen .v-icon {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    background: rgba(109,46,70,0.2);
+    margin: 0 auto 20px;
+  }
+  .value-screen h2 {
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-size: 24px;
+    color: var(--cream);
+    margin-bottom: 16px;
+    line-height: 1.3;
+  }
+  .value-screen p {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+  .value-dots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin: 20px 0;
+  }
+  .value-dots .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: #333;
+  }
+  .value-dots .dot.active { background: var(--gold); }
+
+  /* S4: Signup */
+  .signup-screen { background: var(--cream); }
+  .input-field {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1.5px solid #ddd;
+    border-radius: 10px;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    background: white;
+    margin-bottom: 10px;
+    color: var(--text);
+  }
+  .divider-text {
+    text-align: center;
+    font-size: 12px;
+    color: var(--muted);
+    margin: 16px 0;
+    position: relative;
+  }
+  .social-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    padding: 14px;
+    border: 1.5px solid #ddd;
+    border-radius: 10px;
+    background: white;
+    font-size: 14px;
+    color: var(--text);
+    margin-bottom: 8px;
+    cursor: pointer;
+  }
+
+  /* S5: Conversation */
+  .convo-screen { background: #F4F0EB; }
+  .convo-messages {
+    flex: 1;
+    padding: 16px;
+    overflow-y: auto;
+  }
+  .msg {
+    max-width: 80%;
+    padding: 12px 16px;
+    border-radius: 18px;
+    margin-bottom: 8px;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .msg-agent {
+    background: white;
+    color: var(--text);
+    border-bottom-left-radius: 4px;
+    align-self: flex-start;
+  }
+  .msg-user {
+    background: var(--berry);
+    color: white;
+    border-bottom-right-radius: 4px;
+    align-self: flex-end;
+    margin-left: auto;
+  }
+  .msg-typing {
+    background: white;
+    color: var(--muted);
+    border-bottom-left-radius: 4px;
+    font-style: italic;
+    font-size: 13px;
+  }
+  .convo-input {
+    display: flex;
+    gap: 8px;
+    padding: 12px 16px;
+    background: white;
+    border-top: 1px solid #eee;
+    flex-shrink: 0;
+  }
+  .convo-input input {
+    flex: 1;
+    border: none;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    outline: none;
+  }
+  .convo-input .send-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--berry);
+    border: none;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+  }
+
+  /* Insight card (in conversation) */
+  .insight-card {
+    background: linear-gradient(135deg, var(--dark), #2a1428);
+    border-radius: 16px;
+    padding: 16px;
+    margin: 8px 0;
+    max-width: 90%;
+  }
+  .insight-card .insight-label {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--gold);
+    margin-bottom: 6px;
+  }
+  .insight-card .insight-text {
+    font-size: 13px;
+    color: var(--cream);
+    line-height: 1.5;
+  }
+
+  /* S7: Permission */
+  .permission-screen { background: var(--cream); }
+  .perm-visual {
+    width: 100%;
+    height: 160px;
+    background: linear-gradient(135deg, var(--dark), #2a1428);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+  .perm-visual .perm-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 3px solid var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+  }
+  .perm-point {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    margin-bottom: 16px;
+  }
+  .perm-check {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: rgba(45,122,58,0.12);
+    color: var(--green);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .perm-point p {
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.5;
+  }
+  .perm-point strong { color: var(--dark); }
+
+  /* S8: Processing / Profile Building */
+  .profile-building { background: var(--cream); }
+  .progress-ring-container {
+    width: 180px;
+    height: 180px;
+    margin: 20px auto;
+    position: relative;
+  }
+  .progress-ring-container svg {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+  }
+  .progress-ring-container .ring-bg {
+    fill: none;
+    stroke: var(--warm);
+    stroke-width: 8;
+  }
+  .progress-ring-container .ring-fill {
+    fill: none;
+    stroke: var(--berry);
+    stroke-width: 8;
+    stroke-linecap: round;
+    stroke-dasharray: 452;
+    stroke-dashoffset: 316; /* 30% = 452 * 0.7 */
+    transition: stroke-dashoffset 0.5s;
+  }
+  .progress-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+  }
+  .progress-center .pct {
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-size: 36px;
+    color: var(--dark);
+  }
+  .progress-center .pct-label {
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .dimension-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+  }
+  .dimension-row .dim-name {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+  }
+  .dim-bar-wrap {
+    width: 120px;
+    height: 6px;
+    background: var(--warm);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .dim-bar {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.5s;
+  }
+
+  /* Insight feed */
+  .insight-feed-card {
+    background: white;
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 10px;
+    border-left: 3px solid var(--gold);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  }
+  .insight-feed-card .ifs-time {
+    font-size: 10px;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+  .insight-feed-card .ifs-text {
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.5;
+  }
+
+  /* S10: Match */
+  .match-screen { background: var(--cream); }
+  .match-header-banner {
+    background: linear-gradient(135deg, var(--dark), #2a1428);
+    padding: 60px 24px 24px;
+    text-align: center;
+  }
+  .match-header-banner .match-badge {
+    display: inline-block;
+    padding: 4px 16px;
+    border-radius: 20px;
+    background: rgba(212,168,67,0.2);
+    color: var(--gold);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+  }
+  .match-header-banner h2 {
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-size: 22px;
+    color: var(--cream);
+    margin-bottom: 4px;
+  }
+  .match-header-banner .match-sub {
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .compat-score {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: 16px;
+    background: white;
+    margin: -12px 24px 12px;
+    border-radius: 16px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  }
+  .compat-score .cs-num {
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-size: 42px;
+    color: var(--green);
+  }
+  .compat-score .cs-label {
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .reason-card {
+    background: white;
+    border-radius: 12px;
+    padding: 14px;
+    margin-bottom: 8px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  }
+  .reason-card .rc-dim {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--berry);
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .reason-card .rc-text {
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.5;
+  }
+  .reason-card .rc-flag {
+    font-size: 12px;
+    color: var(--accent);
+    margin-top: 6px;
+    font-style: italic;
+  }
+
+  /* S12: Home dashboard */
+  .home-screen { background: var(--cream); }
+  .home-greeting {
+    padding: 60px 24px 16px;
+  }
+  .home-greeting h1 {
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-size: 26px;
+    color: var(--dark);
+  }
+  .home-greeting .home-sub {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  .domain-chips {
+    display: flex;
+    gap: 8px;
+    padding: 0 24px 16px;
+    overflow-x: auto;
+  }
+  .domain-chip {
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .domain-chip.active { background: var(--berry); color: white; }
+  .domain-chip:not(.active) { background: white; color: var(--text); border: 1px solid #ddd; }
+
+  .agent-status-card {
+    background: linear-gradient(135deg, var(--dark), #2a1428);
+    border-radius: 16px;
+    padding: 16px;
+    margin: 0 24px 12px;
+  }
+  .agent-status-card .as-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+  .agent-status-card .as-text {
+    font-size: 14px;
+    color: var(--cream);
+    line-height: 1.5;
+  }
+  .agent-pulse {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--green);
+    margin-right: 6px;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  /* Notification card */
+  .notif-card {
+    background: white;
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin: 0 24px 10px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    cursor: pointer;
+  }
+  .notif-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 6px;
+  }
+  .notif-card .notif-text {
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.5;
+  }
+  .notif-card .notif-time {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  /* Blip notification (always-on proximity) */
+  .blip-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 50;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 80px;
+  }
+  .blip-card {
+    background: white;
+    border-radius: 20px;
+    padding: 24px;
+    width: 85%;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    text-align: center;
+  }
+  .blip-card .blip-badge {
+    display: inline-block;
+    padding: 4px 14px;
+    border-radius: 20px;
+    background: rgba(45,122,58,0.1);
+    color: var(--green);
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+  }
+  .blip-card h3 {
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-size: 20px;
+    color: var(--dark);
+    margin-bottom: 8px;
+  }
+  .blip-card p {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.5;
+    margin-bottom: 16px;
+  }
+  .blip-actions {
+    display: flex;
+    gap: 8px;
+  }
+  .blip-actions .btn { flex: 1; margin: 0; padding: 12px; font-size: 13px; }
+</style>
+</head>
+<body>
+
+<!-- FLOW MAP -->
+<div class="flow-map" id="flowMap"></div>
+
+<div class="phone-container">
+  <!-- PHONE -->
+  <div class="phone">
+    <div class="phone-notch"></div>
+    <div class="phone-home"></div>
+
+    <!-- S0: First open / splash -->
+    <div class="screen splash-screen active" id="s0">
+      <div>
+        <div class="logo">HALO</div>
+        <div class="gold-line"></div>
+        <div class="tagline">The end of swiping.<br>The beginning of knowing.</div>
+        <div class="sub-tag">An AI agent that understands who you actually are — and finds the person who fits.</div>
+      </div>
+      <div>
+        <button class="btn btn-primary" onclick="goTo(1)">Get Started</button>
+        <button class="btn btn-ghost" onclick="goTo(4)">I already have an account</button>
+      </div>
+    </div>
+
+    <!-- S1: Value prop 1 -->
+    <div class="screen value-screen" id="s1">
+      <div>
+        <div class="v-icon"></div>
+        <h2>You're not bad at dating.<br>The system was never built to help you succeed.</h2>
+        <p>Dating apps exploit the same psychology as slot machines. You stay not because they work, but because leaving feels like giving up.</p>
+      </div>
+      <div>
+        <div class="value-dots"><div class="dot active"></div><div class="dot"></div><div class="dot"></div></div>
+        <button class="btn btn-primary" onclick="goTo(2)">Next</button>
+        <button class="btn btn-ghost" onclick="goTo(4)">Skip</button>
+      </div>
+    </div>
+
+    <!-- S2: Value prop 2 -->
+    <div class="screen value-screen" id="s2">
+      <div>
+        <div class="v-icon"></div>
+        <h2>What if something searched for you?</h2>
+        <p>HALO builds a deep relational profile of who you are — your attachment patterns, values, conflict style — and an AI agent finds specific people who fit. No swiping. No browsing.</p>
+      </div>
+      <div>
+        <div class="value-dots"><div class="dot"></div><div class="dot active"></div><div class="dot"></div></div>
+        <button class="btn btn-primary" onclick="goTo(3)">Next</button>
+        <button class="btn btn-ghost" onclick="goTo(4)">Skip</button>
+      </div>
+    </div>
+
+    <!-- S3: Value prop 3 — privacy -->
+    <div class="screen value-screen" id="s3">
+      <div>
+        <div class="v-icon"></div>
+        <h2>Your data never leaves your device.</h2>
+        <p>HALO processes your messages on your phone. We see patterns — never words. Like a Fitbit for your relationships. It counts steps, not reads your diary.</p>
+      </div>
+      <div>
+        <div class="value-dots"><div class="dot"></div><div class="dot"></div><div class="dot active"></div></div>
+        <button class="btn btn-primary" onclick="goTo(4)">Create Account</button>
+      </div>
+    </div>
+
+    <!-- S4: Signup -->
+    <div class="screen signup-screen" id="s4">
+      <div class="status-bar" style="color:var(--text)"><span>9:41</span><span></span></div>
+      <div class="screen-header"><h1>Create Account</h1></div>
+      <div class="screen-body">
+        <input class="input-field" placeholder="First name" />
+        <input class="input-field" placeholder="Email" />
+        <input class="input-field" placeholder="Password" type="password" />
+        <button class="btn btn-primary" onclick="goTo(5)">Continue</button>
+        <div class="divider-text">or continue with</div>
+        <div class="social-btn">Apple</div>
+        <div class="social-btn">Google</div>
+        <button class="btn btn-ghost" onclick="goTo(0)">Already have an account? Sign in</button>
+      </div>
+    </div>
+
+    <!-- S5: Conversation onboarding (start) -->
+    <div class="screen convo-screen" id="s5">
+      <div class="status-bar" style="color:var(--text);background:#F4F0EB"><span>9:41</span><span></span></div>
+      <div style="padding:12px 16px;background:white;border-bottom:1px solid #eee;flex-shrink:0">
+        <div style="font-size:10px;color:var(--gold);text-transform:uppercase;letter-spacing:2px;font-weight:600">HALO Agent</div>
+        <div style="font-size:14px;font-weight:600;color:var(--dark)">Getting to know you</div>
+      </div>
+      <div class="convo-messages" style="display:flex;flex-direction:column">
+        <div class="msg msg-agent">Hey. Before we start looking for anyone else, I want to understand you. Not the version you put on dating profiles — the real version. Ready?</div>
+        <div class="msg msg-user">Yeah, ready.</div>
+        <div class="msg msg-agent">Tell me about the last relationship that actually mattered to you. Not the longest one necessarily — the one you still think about.</div>
+        <div class="msg msg-user">There was this girl I dated for about 8 months. Started amazing. By month 3 it was already falling apart but I couldn't let go.</div>
+        <div class="insight-card">
+          <div class="insight-label">Pattern Detected</div>
+          <div class="insight-text">Rapid intensity followed by a 3-month inflection point. This is a recurring pattern worth exploring. Can I ask what happened in that third month?</div>
+        </div>
+      </div>
+      <div class="convo-input">
+        <input placeholder="Type a message..." />
+        <button class="send-btn" onclick="goTo(6)">→</button>
+      </div>
+    </div>
+
+    <!-- S6: Conversation deeper -->
+    <div class="screen convo-screen" id="s6">
+      <div class="status-bar" style="color:var(--text);background:#F4F0EB"><span>9:41</span><span></span></div>
+      <div style="padding:12px 16px;background:white;border-bottom:1px solid #eee;flex-shrink:0">
+        <div style="font-size:10px;color:var(--gold);text-transform:uppercase;letter-spacing:2px;font-weight:600">HALO Agent</div>
+        <div style="font-size:14px;font-weight:600;color:var(--dark)">Session 1 — Attachment</div>
+      </div>
+      <div class="convo-messages" style="display:flex;flex-direction:column">
+        <div class="msg msg-agent">When things started going wrong at month 3 — did you pull closer or pull away?</div>
+        <div class="msg msg-user">Closer. Way closer. I'd text more, try to plan things, get anxious when she didn't respond fast enough.</div>
+        <div class="msg msg-agent">And how did she respond to that?</div>
+        <div class="msg msg-user">She pulled back. Said I was being too much. Then I'd overcorrect and go cold. Then she'd come back. It was a cycle.</div>
+        <div class="insight-card">
+          <div class="insight-label">Attachment Profile Emerging</div>
+          <div class="insight-text">Anxious-preoccupied with avoidant overcorrection under perceived rejection. This push-pull cycle is consistent with a fearful-avoidant activation pattern. Your relational profile is 18% complete.</div>
+        </div>
+        <div class="msg msg-agent">I'm starting to see a clear pattern. Let me ask one more thing — when you go cold, what does that feel like internally? Relief? Control? Numbness?</div>
+      </div>
+      <div class="convo-input">
+        <input placeholder="Type a message..." />
+        <button class="send-btn" onclick="goTo(7)">→</button>
+      </div>
+    </div>
+
+    <!-- S7: Data permission -->
+    <div class="screen permission-screen" id="s7">
+      <div class="status-bar" style="color:var(--text)"><span>9:41</span><span></span></div>
+      <div class="screen-header">
+        <h1>Go Deeper</h1>
+        <div class="sub">Your conversation gave me a strong foundation. Message patterns can make it significantly more precise.</div>
+      </div>
+      <div class="screen-body">
+        <div class="perm-visual"><div class="perm-icon">🔒</div></div>
+        <div class="perm-point">
+          <div class="perm-check">✓</div>
+          <p><strong>On-device only.</strong> Your messages are processed on your phone. The actual text never leaves your device.</p>
+        </div>
+        <div class="perm-point">
+          <div class="perm-check">✓</div>
+          <p><strong>Patterns, not words.</strong> I analyze when you text, how fast you respond, communication rhythm. Never content.</p>
+        </div>
+        <div class="perm-point">
+          <div class="perm-check">✓</div>
+          <p><strong>You control it.</strong> Review exactly what gets transmitted before anything leaves. Delete anytime.</p>
+        </div>
+        <div class="perm-point">
+          <div class="perm-check">✓</div>
+          <p><strong>The payoff.</strong> Profile depth jumps from 18% to ~55% with behavioral data. Better profile = better matches.</p>
+        </div>
+        <button class="btn btn-primary" onclick="goTo(8)">Allow Message Analysis</button>
+        <button class="btn btn-secondary" onclick="goTo(8)">Continue Without</button>
+      </div>
+    </div>
+
+    <!-- S8: Profile building / processing -->
+    <div class="screen profile-building" id="s8">
+      <div class="status-bar" style="color:var(--text)"><span>9:41</span><span></span></div>
+      <div class="screen-header"><h1>Your Profile</h1><div class="sub">Building your relational architecture</div></div>
+      <div class="screen-body">
+        <div class="progress-ring-container">
+          <svg viewBox="0 0 160 160">
+            <circle class="ring-bg" cx="80" cy="80" r="72" />
+            <circle class="ring-fill" cx="80" cy="80" r="72" />
+          </svg>
+          <div class="progress-center">
+            <div class="pct">31%</div>
+            <div class="pct-label">Profile Depth</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div style="font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:1.5px;font-weight:600;margin-bottom:8px">Dimensions Mapped</div>
+          <div class="dimension-row"><span class="dim-name">Attachment Style</span><div class="dim-bar-wrap"><div class="dim-bar" style="width:72%;background:var(--berry)"></div></div></div>
+          <div class="dimension-row"><span class="dim-name">Conflict Pattern</span><div class="dim-bar-wrap"><div class="dim-bar" style="width:45%;background:var(--accent)"></div></div></div>
+          <div class="dimension-row"><span class="dim-name">Values Alignment</span><div class="dim-bar-wrap"><div class="dim-bar" style="width:28%;background:var(--gold)"></div></div></div>
+          <div class="dimension-row"><span class="dim-name">Emotional Regulation</span><div class="dim-bar-wrap"><div class="dim-bar" style="width:15%;background:var(--dusty)"></div></div></div>
+          <div class="dimension-row"><span class="dim-name">Attraction Architecture</span><div class="dim-bar-wrap"><div class="dim-bar" style="width:8%;background:var(--muted)"></div></div></div>
+        </div>
+
+        <div style="font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:1.5px;font-weight:600;margin:16px 0 8px">Recent Insights</div>
+        <div class="insight-feed-card">
+          <div class="ifs-time">Today, 2:14 PM</div>
+          <div class="ifs-text">Your response time to emotional messages is 3x faster than logistical ones — but only with people you're anxiously attached to.</div>
+        </div>
+        <div class="insight-feed-card">
+          <div class="ifs-time">Yesterday</div>
+          <div class="ifs-text">You initiate 78% of conversations after conflict. This maps to an anxious repair style — you resolve discomfort through re-engagement, not withdrawal.</div>
+        </div>
+        <button class="btn btn-secondary" onclick="goTo(9)" style="margin-top:16px">Continue Conversation →</button>
+      </div>
+    </div>
+
+    <!-- S9: Profile complete enough for first match -->
+    <div class="screen profile-building" id="s9">
+      <div class="status-bar" style="color:var(--text)"><span>9:41</span><span></span></div>
+      <div class="screen-header"><h1>Your Profile</h1><div class="sub">First match threshold reached</div></div>
+      <div class="screen-body">
+        <div class="progress-ring-container">
+          <svg viewBox="0 0 160 160">
+            <circle class="ring-bg" cx="80" cy="80" r="72" />
+            <circle class="ring-fill" cx="80" cy="80" r="72" style="stroke-dashoffset:203" />
+          </svg>
+          <div class="progress-center">
+            <div class="pct">55%</div>
+            <div class="pct-label">Profile Depth</div>
+          </div>
+        </div>
+
+        <div class="card" style="border-left:3px solid var(--green);background:#F8FFF8">
+          <div style="font-size:11px;color:var(--green);text-transform:uppercase;letter-spacing:1.5px;font-weight:600;margin-bottom:6px">Agent Update</div>
+          <p style="font-size:14px;color:var(--text);line-height:1.5">Your profile has reached the depth threshold for high-confidence matching. I've identified someone with strong dimensional alignment. Ready to see them?</p>
+        </div>
+
+        <button class="btn btn-primary" onclick="goTo(10)">Show Me</button>
+        <button class="btn btn-secondary" onclick="goTo(8)">Keep Building First</button>
+      </div>
+    </div>
+
+    <!-- S10: Match presentation -->
+    <div class="screen match-screen" id="s10">
+      <div class="match-header-banner">
+        <div class="match-badge">Match #1 of 3 This Month</div>
+        <h2>Sarah, 28</h2>
+        <div class="match-sub">San Francisco · Presented with full reasoning</div>
+      </div>
+      <div class="compat-score">
+        <div>
+          <div class="cs-num">84%</div>
+          <div class="cs-label">Compatibility</div>
+        </div>
+        <div style="width:1px;height:40px;background:#eee"></div>
+        <div style="text-align:left">
+          <div style="font-size:12px;color:var(--green);font-weight:600">High confidence</div>
+          <div style="font-size:11px;color:var(--muted)">Strong across 4 of 5 layers</div>
+        </div>
+      </div>
+      <div style="padding:0 24px 24px">
+        <div style="font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:1.5px;font-weight:600;margin-bottom:8px">Why This Person</div>
+        <div class="reason-card">
+          <div class="rc-dim">Attachment</div>
+          <div class="rc-text">She's securely attached with a slight anxious lean. Your anxious-preoccupied style responds well to consistent reassurance — which she naturally provides.</div>
+        </div>
+        <div class="reason-card">
+          <div class="rc-dim">Conflict Style</div>
+          <div class="rc-text">Direct engager. When you withdraw during conflict, she pursues resolution without escalating — breaking the push-pull cycle instead of feeding it.</div>
+        </div>
+        <div class="reason-card">
+          <div class="rc-dim">Values</div>
+          <div class="rc-text">Shared priority on intellectual depth and personal growth. Low alignment on social ambition — historically not a dealbreaker for your profile.</div>
+        </div>
+        <div class="reason-card">
+          <div class="rc-dim">Watch For</div>
+          <div class="rc-flag">You both tend to accelerate emotional intimacy in month 1. The 3-month fade pattern could activate. Recommended pacing: let weeks 4-8 develop naturally.</div>
+        </div>
+        <button class="btn btn-primary" onclick="goTo(11)">I'm Interested</button>
+        <button class="btn btn-secondary" onclick="goTo(12)">Not Right Now</button>
+      </div>
+    </div>
+
+    <!-- S11: Connection initiated -->
+    <div class="screen" id="s11" style="background:var(--cream)">
+      <div class="status-bar" style="color:var(--text)"><span>9:41</span><span></span></div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px;text-align:center">
+        <div style="width:80px;height:80px;border-radius:50%;background:rgba(45,122,58,0.1);display:flex;align-items:center;justify-content:center;font-size:36px;margin-bottom:20px">✓</div>
+        <h2 style="font-family:'DM Serif Display',Georgia,serif;font-size:24px;color:var(--dark);margin-bottom:8px">Connection Initiated</h2>
+        <p style="font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:24px">Sarah has been notified that someone with strong compatibility has expressed interest. She'll see your match reasoning — the same depth you saw.</p>
+        <div class="card" style="text-align:left;width:100%">
+          <div style="font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:1.5px;font-weight:600;margin-bottom:6px">What Happens Next</div>
+          <p style="font-size:13px;color:var(--text);line-height:1.6">If she's interested, we'll facilitate an introduction. No generic "hey." The agent drafts an opener informed by what you actually have in common.</p>
+        </div>
+      </div>
+      <div style="padding:0 24px 24px">
+        <button class="btn btn-primary" onclick="goTo(12)">Back to Home</button>
+      </div>
+    </div>
+
+    <!-- S12: Home (steady state) -->
+    <div class="screen home-screen" id="s12">
+      <div class="status-bar" style="color:var(--text)"><span>9:41</span><span></span></div>
+      <div class="home-greeting">
+        <h1>Good morning, Aron</h1>
+        <div class="home-sub">Profile depth: 67% · Agent active</div>
+      </div>
+
+      <div class="domain-chips">
+        <div class="domain-chip active">Romance</div>
+        <div class="domain-chip">Professional</div>
+        <div class="domain-chip">Recreational</div>
+        <div class="domain-chip">Roommate</div>
+      </div>
+
+      <div class="agent-status-card">
+        <div class="as-label"><span class="agent-pulse"></span> Agent Status</div>
+        <div class="as-text">Actively evaluating 3 potential matches in the Romance domain. Highest current alignment: 79%. Refining conflict compatibility layer before presenting.</div>
+      </div>
+
+      <div style="padding:0 24px;font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:1.5px;font-weight:600;margin-bottom:8px">This Week</div>
+
+      <div class="notif-card" onclick="goTo(8)">
+        <div class="notif-dot" style="background:var(--berry)"></div>
+        <div>
+          <div class="notif-text"><strong>New insight:</strong> Your late-night messaging pattern correlates with attachment anxiety activation, not genuine intimacy. This refines your match criteria.</div>
+          <div class="notif-time">2 hours ago</div>
+        </div>
+      </div>
+
+      <div class="notif-card" onclick="goTo(10)">
+        <div class="notif-dot" style="background:var(--green)"></div>
+        <div>
+          <div class="notif-text"><strong>Match update:</strong> Sarah viewed your reasoning and expressed interest. Connection facilitation ready.</div>
+          <div class="notif-time">Yesterday</div>
+        </div>
+      </div>
+
+      <div class="notif-card">
+        <div class="notif-dot" style="background:var(--gold)"></div>
+        <div>
+          <div class="notif-text"><strong>Profile depth:</strong> Reached 67%. Conflict compatibility layer now active. Match precision increased.</div>
+          <div class="notif-time">3 days ago</div>
+        </div>
+      </div>
+
+      <div style="flex:1"></div>
+      <div class="tab-bar">
+        <div class="tab active"><div class="tab-icon"></div><span>Home</span></div>
+        <div class="tab" onclick="goTo(8)"><div class="tab-icon"></div><span>Profile</span></div>
+        <div class="tab" onclick="goTo(10)"><div class="tab-icon"></div><span>Matches</span></div>
+        <div class="tab" onclick="goTo(5)"><div class="tab-icon"></div><span>Agent</span></div>
+      </div>
+    </div>
+
+    <!-- S13: Proximity blip (always-on) -->
+    <div class="screen home-screen" id="s13">
+      <div class="status-bar" style="color:var(--text)"><span>9:41</span><span></span></div>
+      <div class="home-greeting">
+        <h1>Good morning, Aron</h1>
+        <div class="home-sub">Profile depth: 67% · Agent active</div>
+      </div>
+      <div class="domain-chips">
+        <div class="domain-chip active">Romance</div>
+        <div class="domain-chip">Professional</div>
+        <div class="domain-chip">Recreational</div>
+      </div>
+      <div class="agent-status-card">
+        <div class="as-label"><span class="agent-pulse"></span> Agent Status</div>
+        <div class="as-text">Scanning nearby. 1 proximity match detected.</div>
+      </div>
+      <!-- Blip overlay -->
+      <div class="blip-overlay">
+        <div class="blip-card">
+          <div class="blip-badge">Proximity Match</div>
+          <h3>Someone nearby matches your profile</h3>
+          <p>A person in Terminal B shares strong alignment on intellectual curiosity, direct communication style, and compatible attachment patterns. 76% compatibility.</p>
+          <div class="blip-actions">
+            <button class="btn btn-primary" onclick="goTo(12)">Tell Me More</button>
+            <button class="btn btn-secondary" onclick="goTo(12)">Not Now</button>
+          </div>
+        </div>
+      </div>
+      <div style="flex:1"></div>
+    </div>
+
+  </div>
+
+  <!-- ANNOTATION PANEL -->
+  <div class="annotation" id="annotation"></div>
+</div>
+
+<script>
+const screens = [
+  { id: "s0",  name: "Splash",        section: "First Open",
+    desc: "First thing the user sees. Dark, minimal. The tagline does the work: speaks to their exhaustion, not their excitement. Two paths: new user or returning.",
+    actions: [["Get Started → S1", 1], ["Sign In → S4", 4]] },
+  { id: "s1",  name: "Value 1",       section: "First Open",
+    desc: "\"You're not bad at dating.\" The first screen validates their frustration before pitching anything. Recognition, not a promise. This is the emotional hook.",
+    actions: [["Next → S2", 2], ["Skip → S4", 4]] },
+  { id: "s2",  name: "Value 2",       section: "First Open",
+    desc: "\"What if something searched for you?\" Introduces the agent concept. No swiping, no browsing. The mental model shifts from \"I search\" to \"something works for me.\"",
+    actions: [["Next → S3", 3], ["Skip → S4", 4]] },
+  { id: "s3",  name: "Privacy",       section: "First Open",
+    desc: "Data security addressed before signup — not buried in settings. The Fitbit analogy: counts steps, doesn't read your diary. This is the objection-killer.",
+    actions: [["Create Account → S4", 4]] },
+  { id: "s4",  name: "Signup",        section: "Account",
+    desc: "Standard signup. Email + password or social auth. Minimal friction. No profile photo, no bio, no \"about me\" — that's the old paradigm.",
+    actions: [["Continue → S5", 5]] },
+  { id: "s5",  name: "Conversation 1", section: "Onboarding",
+    desc: "The agent talks to you — not a questionnaire. It asks about real relationships, real patterns. The first insight card appears mid-conversation: \"I noticed a pattern.\" This is the moment the user thinks: this is different.",
+    actions: [["Continue chatting → S6", 6]] },
+  { id: "s6",  name: "Conversation 2", section: "Onboarding",
+    desc: "The conversation goes deeper. Attachment style starts emerging from the user's own words. The agent reflects it back with clinical precision. Profile is now 18%. The user feels understood at a level no app has ever achieved.",
+    actions: [["Continue → S7", 7]] },
+  { id: "s7",  name: "Data Permission",section: "Onboarding",
+    desc: "Trust has been EARNED — not assumed. The agent already proved value through the conversation. Now it asks for message access with full transparency: on-device, patterns not words, user controls everything. 18% → 55% is a clear payoff.",
+    actions: [["Allow → S8", 8], ["Skip → S8", 8]] },
+  { id: "s8",  name: "Profile Building",section: "Profile",
+    desc: "The wait period. No swiping, no dopamine. Instead: the profile depth ring grows, dimension bars fill, and insight cards arrive. \"Your response time to emotional messages is 3x faster with people you're anxiously attached to.\" Self-knowledge as retention.",
+    actions: [["Continue Conversation → S9", 9]] },
+  { id: "s9",  name: "Match Threshold",section: "Profile",
+    desc: "Profile hits 55% — the minimum for high-confidence matching. The agent tells you it found someone. This is the narrow-and-deep hope: \"Someone who knows me found my person.\" The user chooses when they're ready.",
+    actions: [["Show Me → S10", 10], ["Keep Building → S8", 8]] },
+  { id: "s10", name: "Match Detail",   section: "Match",
+    desc: "No photo and bio. A reason. Compatibility score with breakdown by dimension. \"She's securely attached with anxious lean — your style responds well to consistent reassurance, which she naturally provides.\" Plus a Watch For section. Scarcity: match 1 of 3 this month.",
+    actions: [["I'm Interested → S11", 11], ["Not Now → S12", 12]] },
+  { id: "s11", name: "Connection",     section: "Match",
+    desc: "Mutual interest confirmed. No generic \"hey.\" The agent drafts an opener based on actual shared dimensions. Both people see the same depth of reasoning. The connection starts with understanding, not performance.",
+    actions: [["Back to Home → S12", 12]] },
+  { id: "s12", name: "Home Dashboard", section: "Steady State",
+    desc: "The daily experience. Domain tabs (Romance, Professional, Recreational, Roommate), agent status with live pulse, insight notifications, match updates. The engagement loop is self-knowledge and agent progress — not likes and messages from strangers.",
+    actions: [["Profile tab → S8", 8], ["Matches tab → S10", 10], ["Agent tab → S5", 5], ["Blip demo → S13", 13]] },
+  { id: "s13", name: "Proximity Blip", section: "Always-On",
+    desc: "The vision. App is backgrounded. You're at the airport. A notification drops: \"Someone in Terminal B matches your profile. 76% compatibility.\" You didn't search. You didn't open the app. The agent found them. This is the always-on experience.",
+    actions: [["Tell Me More → S12", 12], ["Not Now → S12", 12]] },
+];
+
+let currentScreen = 0;
+
+function goTo(idx) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(`s${idx}`).classList.add('active');
+  currentScreen = idx;
+  updateFlowMap();
+  updateAnnotation();
+}
+
+function updateFlowMap() {
+  const map = document.getElementById('flowMap');
+  let html = '';
+  let lastSection = '';
+  screens.forEach((s, i) => {
+    if (s.section !== lastSection) {
+      html += `<div class="flow-label">${s.section}</div>`;
+      lastSection = s.section;
+    }
+    html += `<div class="flow-dot ${i === currentScreen ? 'active' : ''}" onclick="goTo(${i})">${i}</div>`;
+    if (i < screens.length - 1 && screens[i+1].section === s.section) {
+      html += `<span class="flow-arrow">→</span>`;
+    }
+  });
+  map.innerHTML = html;
+}
+
+function updateAnnotation() {
+  const s = screens[currentScreen];
+  const ann = document.getElementById('annotation');
+  let html = `
+    <div class="screen-id">Screen ${currentScreen} / ${screens.length - 1}</div>
+    <h3>${s.name}</h3>
+    <p>${s.desc}</p>
+    <div class="action-label">User Actions</div>
+  `;
+  s.actions.forEach(([label, target]) => {
+    html += `<div class="action-item" onclick="goTo(${target})"><span>→</span> ${label}</div>`;
+  });
+  ann.innerHTML = html;
+}
+
+// Init
+updateFlowMap();
+updateAnnotation();
+</script>
+
+</body>
+</html>
