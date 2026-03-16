@@ -33,6 +33,9 @@ export interface MatchRecord {
   user_b_id: string;
   compatibility_score: number;
   shared_traits: string[];
+  complementary_traits?: string[];
+  match_dimensions?: any[];
+  risk_factors?: string[];
   iris_description: string;
   status: string;
   venue: any;
@@ -138,6 +141,9 @@ export function useAppFlow() {
       irisDescription: match.iris_description || "I found someone worth meeting.",
       compatibility: match.compatibility_score,
       sharedTraits: match.shared_traits || [],
+      complementaryTraits: match.complementary_traits || [],
+      match_dimensions: match.match_dimensions || [],
+      risk_factors: match.risk_factors || [],
       matchName: match.other_user_name || "Your match",
       matchPhoto: { url: "", verified: true, verifiedAt: "Mar 2026", contextLine: "" },
       venue: match.venue?.name || "Coffee shop",

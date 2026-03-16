@@ -4,15 +4,25 @@ import { HaloMark, IrisOrb, PrimaryButton, ScreenWrap } from "@/components/ui";
 
 const PHASES = ["DEPLOY", "SCAN", "ANALYZE", "NEGOTIATE", "LOCK"];
 
-// Demo match data — used when no real users exist in the database
+// Demo match data — showcases the matching engine's multi-dimensional output
 const DEMO_MATCH = {
   id: "demo-match-001",
   user_a_id: "demo-a",
   user_b_id: "demo-b",
   status: "pending",
-  compatibility_score: 91,
-  shared_traits: ["Deep curiosity", "Values authenticity", "Growth oriented", "Direct communicator"],
-  iris_description: "I found someone worth meeting. High compatibility across emotional intelligence, communication style, and core values.",
+  compatibility_score: 89,
+  shared_traits: ["Authenticity", "Curiosity", "Depth", "Growth oriented"],
+  complementary_traits: ["Communication: Direct + Thoughtful", "Social Energy: Introvert + Ambivert"],
+  iris_description: "High-signal match. Both bring secure attachment patterns — the strongest foundation for lasting connection. Shared foundation in authenticity and curiosity.",
+  match_dimensions: [
+    { name: "Attachment Compatibility", score: 95, weight: 0.25, weighted: 23.75, insight: "Both bring secure attachment patterns. This is the strongest foundation for lasting connection." },
+    { name: "Communication Resonance", score: 86, weight: 0.20, weighted: 17.2, insight: "Direct meets thoughtful — different styles, but high mutual readability." },
+    { name: "Values Alignment", score: 92, weight: 0.20, weighted: 18.4, insight: "Strong values alignment: both prioritize authenticity and depth. This is the bedrock." },
+    { name: "Emotional Intelligence", score: 88, weight: 0.15, weighted: 13.2, insight: "Close emotional wavelength. Minor asymmetry won't create friction." },
+    { name: "Growth Trajectory", score: 84, weight: 0.10, weighted: 8.4, insight: "Both on active growth trajectories. They'll push each other forward." },
+    { name: "Intent Alignment", score: 91, weight: 0.10, weighted: 9.1, insight: "Both seeking genuine connection. Intent is aligned." },
+  ],
+  risk_factors: [],
   venue: {
     name: "Saint Frank Coffee",
     area: "Russian Hill, SF",
@@ -22,7 +32,7 @@ const DEMO_MATCH = {
   },
   meeting_day: "Saturday",
   meeting_time: "10:30 AM",
-  conversation_starter: "Ask them what they are most curious about right now.",
+  conversation_starter: "Ask them what makes them feel most at home with someone.",
   other_user_name: "Elena",
 };
 
