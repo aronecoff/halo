@@ -102,23 +102,39 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
 
         <AnimatePresence mode="wait">
           {!showInput ? (
-            <motion.button
+            <motion.div
               key="cta"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95 }}
               transition={{ duration: 0.5, delay: 0.6 }}
-              onClick={() => setShowInput(true)}
-              style={{
-                padding: "16px 48px", borderRadius: 14, border: "none",
-                background: "linear-gradient(135deg, #A78BFA, #7C3AED)",
-                color: "#fff", fontSize: 16, fontWeight: 600, cursor: "pointer",
-                letterSpacing: 1, textTransform: "uppercase",
-                boxShadow: "0 4px 30px rgba(124,58,237,0.4)",
-              }}
+              style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 16 }}
             >
-              Activate Your Agent
-            </motion.button>
+              <button
+                onClick={() => setShowInput(true)}
+                style={{
+                  padding: "16px 48px", borderRadius: 14, border: "none",
+                  background: "linear-gradient(135deg, #A78BFA, #7C3AED)",
+                  color: "#fff", fontSize: 16, fontWeight: 600, cursor: "pointer",
+                  letterSpacing: 1, textTransform: "uppercase",
+                  boxShadow: "0 4px 30px rgba(124,58,237,0.4)",
+                }}
+              >
+                Activate Your Agent
+              </button>
+              <button
+                onClick={() => onGetStarted("Investor")}
+                style={{
+                  padding: "10px 28px", borderRadius: 10, cursor: "pointer",
+                  border: "1px solid rgba(139,92,246,0.25)",
+                  background: "rgba(139,92,246,0.06)", color: "#9CA3AF",
+                  fontSize: 13, fontWeight: 500, letterSpacing: 0.5,
+                  transition: "all 0.2s ease",
+                }}
+              >
+                Try Demo
+              </button>
+            </motion.div>
           ) : (
             <motion.div
               key="input"
