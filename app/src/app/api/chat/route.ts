@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { IRIS_SYSTEM_PROMPT } from "@/lib/iris-prompt";
+import { rateLimit } from "@/lib/rate-limit";
 
 export const maxDuration = 30;
 
@@ -10,6 +11,13 @@ interface ChatMessage {
 
 export async function POST(request: Request) {
   try {
+    // Rate limit by IP — 30 requests per minute (generous for chat)
+    const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+    const limit = rateLimit(`chat:${ip}`, { maxRequests: 30, windowMs: 60_000 });
+    if (!limit.success) {
+      return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+    }
+
     // Parse body
     const body = await request.json();
     const { messages, scanContext } = body as {
@@ -63,8 +71,8 @@ ${scanContext}`;
       const errBody = await response.text();
       console.error("Anthropic API error:", response.status, errBody);
       return NextResponse.json(
-        { error: `Anthropic API error: ${response.status}`, detail: errBody },
-        { status: 500 }
+        { error: "Chat service temporarily unavailable" },
+        { status: 502 }
       );
     }
 

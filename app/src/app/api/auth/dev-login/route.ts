@@ -1,15 +1,32 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { rateLimit } from "@/lib/rate-limit";
 
 // Dev-only login endpoint that creates/signs in users without email verification
 // Uses the service role key to bypass email rate limits during testing
 // Gated behind ENABLE_DEV_LOGIN=true for safety
+// NEVER enable in production — set ENABLE_DEV_LOGIN=false or leave unset
 export async function POST(request: Request) {
+  // Double gate: block in production even if env var is misconfigured
+  if (process.env.NODE_ENV === "production" && process.env.VERCEL_ENV === "production") {
+    return NextResponse.json(
+      { error: "Dev login is not available" },
+      { status: 403 }
+    );
+  }
+
   if (process.env.ENABLE_DEV_LOGIN !== "true") {
     return NextResponse.json(
       { error: "Dev login is disabled in this environment" },
       { status: 403 }
     );
+  }
+
+  // Rate limit — 5 attempts per minute per IP
+  const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+  const limit = rateLimit(`dev-login:${ip}`, { maxRequests: 5, windowMs: 60_000 });
+  if (!limit.success) {
+    return NextResponse.json({ error: "Too many requests" }, { status: 429 });
   }
 
   try {

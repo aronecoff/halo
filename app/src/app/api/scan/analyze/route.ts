@@ -1,10 +1,18 @@
 import { NextResponse } from "next/server";
 import { SCAN_ANALYSIS_PROMPT } from "@/lib/scan-analysis-prompt";
+import { rateLimit } from "@/lib/rate-limit";
 
 export const maxDuration = 30;
 
 export async function POST(request: Request) {
   try {
+    // Rate limit by IP — 5 requests per minute (scan happens once per session)
+    const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+    const limit = rateLimit(`scan:${ip}`, { maxRequests: 5, windowMs: 60_000 });
+    if (!limit.success) {
+      return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+    }
+
     const body = await request.json();
     const { scanData } = body;
 
